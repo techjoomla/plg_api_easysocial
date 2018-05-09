@@ -5,22 +5,22 @@
  * @license    GNU GPLv2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
  * @link       http://www.techjoomla.com
  */
-defined('_JEXEC') or die( 'Restricted access' );
+defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.plugin.plugin');
 
 // Added this line to EasySocial api compatible with EasySocial 2.1.0 package
 ES::import('site:/controllers/controller');
 
-/** plgAPIEasysocial
+/** Class plgAPIEasysocial
  *
  * @since  1.8.8
  */
 class PlgAPIEasysocial extends ApiPlugin
 {
 	/** Construct
-	 * 
-	 * @param   int  &$subject  subject
+	 *
+	 * @param   int  $subject   subject
 	 * @param   int  $config    config
 	 */
 	public function __construct(&$subject, $config = array())
@@ -29,7 +29,7 @@ class PlgAPIEasysocial extends ApiPlugin
 
 		ApiResource::addIncludePath(dirname(__FILE__) . '/easysocial');
 
-		/*load language file for plugin frontend*/
+		// Load language file for plugin frontend
 		$lang = JFactory::getLanguage();
 		$lang->load('plg_api_easysocial', JPATH_ADMINISTRATOR, '', true);
 		$lang->load('com_easysocial', JPATH_ADMINISTRATOR, '', true);
