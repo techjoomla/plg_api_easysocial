@@ -537,9 +537,12 @@ class EasySocialApiMappingHelper
 
 				if ($item->source)
 				{
-					$item->preview = '<div class="video-container"><iframe src="' . $item->source . '" frameborder="0" allowfullscreen=""></iframe></div>';
+					$table = ES::table('Video');
+					$table->load($item->element_id);
+					$video = ES::video($table->uid, $table->type, $table);
+					$item->thumbnail = JURI::root() . $video->thumbnail;
+					$item->preview = '<video width="320" height="240" controls poster="' . $item->thumbnail . '"><source src="' . $item->source . ' " type="video/mp4"></video>';
 				}
-				// End : Added by pratiksha for play uploaded video
 
 				// Set the stream content
 				if (!empty($item->preview))
