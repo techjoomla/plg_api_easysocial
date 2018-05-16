@@ -59,7 +59,7 @@ class EasySocialApiMappingHelper
 	 * @param   int     $text_length  text length
 	 * @param   string  $skip         skip
 	 *
-	 * @return  string|array
+	 * @return  void|object
 	 *
 	 * @since 1.0
 	 */
@@ -129,7 +129,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * Method To build photo object
 	 *
-	 * @param   string  $rows    array of data
+	 * @param   array  $rows    array of data
 	 * @param   int     $userid  user id
 	 *
 	 * @return array
@@ -184,7 +184,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * To build ablum object
 	 *
-	 * @param   string  $rows    array of data
+	 * @param   array  $rows    array of data
 	 * @param   int     $userid  user id
 	 *
 	 * @return array
@@ -251,9 +251,9 @@ class EasySocialApiMappingHelper
 	/**
 	 * To build field object
 	 *
-	 * @param   string  $rows    array of data
+	 * @param   array   $rows    array of data
 	 * @param   int     $userid  user id
-	 * @param   int     $type    type
+	 * @param   string  $type    type
 	 *
 	 * @return array
 	 *
@@ -926,7 +926,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * To build ablum object
 	 *
-	 * @param   string  $rows  array of data
+	 * @param   array  $rows  array of data
 	 *
 	 * @return array
 	 *
@@ -1006,7 +1006,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * Function for create category schema
 	 *
-	 * @param   string  $rows  array of data
+	 * @param   array  $rows  array of data
 	 *
 	 * @return array
 	 *
@@ -1037,7 +1037,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * to build event obj.
 	 *
-	 * @param   object  $rows    array of data
+	 * @param   array  $rows    array of data
 	 * @param   int     $userid  user id
 	 *
 	 * @return array
@@ -1474,7 +1474,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * function for create profile schema
 	 *
-	 * @param   string  $other_user_id  other user id
+	 * @param   int  $other_user_id  other user id
 	 * @param   int     $userid         user id
 	 *
 	 * @return array
@@ -1540,7 +1540,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * function for create user schema
 	 *
-	 * @param   string  $rows  array of data
+	 * @param   array  $rows  array of data
 	 *
 	 * @return array
 	 *
@@ -1566,7 +1566,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * function for create message schema
 	 *
-	 * @param   string  $rows      array of data
+	 * @param   array  $rows      array of data
 	 * @param   int     $log_user  user object
 	 *
 	 * @return array
@@ -1617,7 +1617,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * function for create message schema
 	 *
-	 * @param   string  $rows  array of data
+	 * @param   array  $rows  array of data
 	 *
 	 * @return array
 	 *
@@ -1653,7 +1653,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * To build ablum object
 	 *
-	 * @param   string  $rows  array of data
+	 * @param   array  $rows  array of data
 	 *
 	 * @return array
 	 *

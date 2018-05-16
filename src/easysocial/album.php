@@ -70,7 +70,7 @@ class EasysocialApiResourceAlbum extends ApiResource
 								break;
 		}
 
-		return $this->plugin->setResponse($res);
+		$this->plugin->setResponse($res);
 	}
 
 	/**
