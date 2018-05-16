@@ -48,4 +48,16 @@ class GroupSimpleSchema
 	public $more_info;
 
 	public $params;
+
+	public $alias;
+
+	public $state;
+
+	public $group_type;
+
+	public $cover_position;
+
+	public $creator_name;
+
+	public $isinvited;
 }

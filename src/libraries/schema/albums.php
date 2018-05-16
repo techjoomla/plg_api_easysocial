@@ -50,4 +50,6 @@ class GetalbumsSimpleSchema
 	public $commentcount;
 
 	public $isowner;
+
+	public $share_url;
 }

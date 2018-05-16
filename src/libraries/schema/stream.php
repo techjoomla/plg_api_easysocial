@@ -52,6 +52,20 @@ class streamSimpleSchema
 	public $file_name;
 
 	public $download_file_url;
+
+	public $source;
+	
+	public $thumbnail;
+
+	public $verb;
+
+	public $isself;
+
+	public $isAdmin;
+
+	public $lapsed;
+
+	public $mini;
 }
 
 /** likesSimpleSchema
@@ -71,6 +85,16 @@ class likesSimpleSchema
 	public $created_by;
 
 	public $total;
+
+	public $element;
+
+	public $group;
+
+	public $hasLiked;
+
+	public $like_obj;
+
+	public $like_obj;
 }
 
 /** commentsSimpleSchema
@@ -100,4 +124,10 @@ class commentsSimpleSchema
 	public $lapsed;
 
 	public $params;
+
+	public $type;
+
+	public $likes;
+
+	public $likes;
 }

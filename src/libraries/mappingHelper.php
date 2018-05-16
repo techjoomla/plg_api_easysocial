@@ -120,7 +120,6 @@ class EasySocialApiMappingHelper
 				break;
 		}
 
-		return $item;
 	}
 
 	/**
@@ -502,7 +501,6 @@ class EasySocialApiMappingHelper
 					}
 					else
 					{
-						$df = preg_replace("/\s+/", '', $first);
 						$df = preg_replace("/watch\?v=([a-zA-Z0-9\]+)([a-zA-Z0-9\/\\\\?\&\;\%\=\.])/i", "embed/$1 ", $first);
 						$abc = $df . "?feature=oembed";
 						$df = preg_replace("/\s+/", '', $abc);
@@ -516,7 +514,6 @@ class EasySocialApiMappingHelper
 					$searchjoin = "data-es-groups-join";
 					$searchleave = "data-es-groups-leave";
 					$insert = "style='display:none'";
-					$index = strpos($item->preview, $search);
 					$item->preview = str_replace($searchrsvp, $insert, $item->preview);
 					$item->preview = str_replace($searchjoin, $insert, $item->preview);
 					$item->preview = str_replace($searchleave, $insert, $item->preview);
@@ -728,15 +725,12 @@ class EasySocialApiMappingHelper
 		$poll = FD::table('Polls');
 		$poll->load($pid);
 		$opts = $poll->getItems();
-		$pollLib = FD::get('Polls');
 
 		$my = ES::user();
 		$privacy = $my->getPrivacy();
 		$isVoted = $poll->isVoted($my->id);
 		$isExpired = false;
-		$showResult = false;
 		$canVote = false;
-		$canEdit = ($my->id == $poll->created_by || $my->isSiteAdmin()) ? true : false;
 
 		if ($privacy->validate('polls.vote', $poll->created_by, SOCIAL_TYPE_USER))
 		{
@@ -806,18 +800,14 @@ class EasySocialApiMappingHelper
 	public function createPollDataview($poll, $opts)
 	{
 		// New code end
-		$content = "<div ng-disabled=" . !$poll->canVote . ">";
 
 		$content = "<label>" . $poll->title . "</label>";
-		$check = array();
 
 		foreach ($opts as $k => $val)
 		{
 			$check[] = $val->id;
 		}
 
-		$arr = count($check);
-		$check = implode(':', $check);
 		$obj = new stdClass;
 		$obj->poll = $poll;
 		$obj->opts = $opts;

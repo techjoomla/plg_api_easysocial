@@ -66,4 +66,12 @@ class VideoSimpleSchema
 	public $location;
 
 	public $stream_id;
+
+	public $hasLiked;
+
+	public $video_url;
+
+	public $isSiteAdmin;
+
+	public $base_obj;
 }

@@ -68,4 +68,28 @@ class EventsSimpleSchema
 	public $isRecurring;                                
 
 	public $hasRecurring;
+
+	public $cover_position;
+
+	public $end_time;
+
+	public $type;
+
+	public $event_type;
+
+	public $isMember;
+
+	public $owner;
+
+	public $owner_id;
+
+	public $total_guest;
+
+	public $event_map_url_andr;
+
+	public $event_map_url_ios;
+
+	public $isInvited;
+
+	public $action;
 }

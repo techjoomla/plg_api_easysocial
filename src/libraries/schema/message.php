@@ -26,6 +26,12 @@ class converastionSimpleSchema
 	public $lapsed;
 
 	public $participant;
+
+	public $lastMessage;
+
+	public $lastMessageDate;
+
+	public $newMsgCount;
 }
 
 /** To build simple message schema
