@@ -59,11 +59,11 @@ class EasySocialApiMappingHelper
 	 * @param   int     $text_length  text length
 	 * @param   string  $skip         skip
 	 *
-	 * @return  void|object
+	 * @return  void|object|array
 	 *
 	 * @since 1.0
 	 */
-	public function mapItem($rows, $obj_type = '', $userid = 0, $type = '', $strip_tags = '', $text_length = 0, $skip = array())
+	public function mapItem($rows, $obj_type = '', $userid = 0, $type = '' )
 	{
 		// $this->log_user = $userid;
 		$this->log_user = JFactory::getUser()->id;
@@ -87,9 +87,6 @@ class EasySocialApiMappingHelper
 				break;
 			case 'user':
 				return $this->userSchema($rows);
-				break;
-			case 'comment':
-				return $this->commentSchema($rows);
 				break;
 			case 'message':
 				return $this->messageSchema($rows);
@@ -1474,7 +1471,7 @@ class EasySocialApiMappingHelper
 	/**
 	 * function for create profile schema
 	 *
-	 * @param   int  $other_user_id  other user id
+	 * @param   array   $other_user_id  other user id
 	 * @param   int     $userid         user id
 	 *
 	 * @return array
