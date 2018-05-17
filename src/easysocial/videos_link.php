@@ -48,14 +48,14 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 		$es_config = ES::config();
 		$log_user = $this->plugin->get('user')->id;
 
-		$post['category_id'] = $app->input->get('category_id', 0, 'INT');
-		$post['uid'] = $app->input->get('uid', $log_user, 'INT');
-		$post['title'] = $app->input->get('title', '', 'STRING');
-		$post['description'] = $app->input->get('description', '', 'STRING');
-		$post['link'] = $app->input->get('path', '', 'STRING');
-		$post['location'] = $app->input->get('location', '', 'STRING');
-		$post['privacy'] = $app->input->get('privacy', '', 'STRING');
-		$post['type'] = $app->input->get('type', '', 'STRING');
+		$post['category_id']	=	$app->input->get('category_id', 0, 'INT');
+		$post['uid']			=	$app->input->get('uid', $log_user, 'INT');
+		$post['title']			=	$app->input->get('title', '', 'STRING');
+		$post['description']	=	$app->input->get('description', '', 'STRING');
+		$post['link']			=	$app->input->get('path', '', 'STRING');
+		$post['location']		=	$app->input->get('location', '', 'STRING');
+		$post['privacy']		=	$app->input->get('privacy', '', 'STRING');
+		$post['type']			=	$app->input->get('type', '', 'STRING');
 
 		$video = ES::video();
 		$res = new stdClass;
