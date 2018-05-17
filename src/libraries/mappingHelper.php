@@ -677,8 +677,8 @@ class EasySocialApiMappingHelper
 	/**
 	 * Create like object
 	 *
-	 * @param   string  $row     array of data
-	 * @param   int     $userid  user id
+	 * @param   array|oblect   $row     array of data
+	 * @param   int            $userid  user id
 	 *
 	 * @return array
 	 *
@@ -812,7 +812,7 @@ class EasySocialApiMappingHelper
 		$obj->poll = $poll;
 		$obj->opts = $opts;
 
-		return $content = $obj;
+		return $obj;
 	}
 
 	/**

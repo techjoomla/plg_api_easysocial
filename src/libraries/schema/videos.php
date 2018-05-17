@@ -74,4 +74,10 @@ class VideoSimpleSchema
 	public $isSiteAdmin;
 
 	public $base_obj;
+
+	public $created_by;
+
+	public $category_name;
+
+	public $commentsobj;
 }

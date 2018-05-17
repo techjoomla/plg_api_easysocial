@@ -92,4 +92,8 @@ class EventsSimpleSchema
 	public $isInvited;
 
 	public $action;
+
+	public $start_time;
+
+	public $isNotAttending;
 }

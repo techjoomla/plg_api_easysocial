@@ -66,6 +66,8 @@ class streamSimpleSchema
 	public $lapsed;
 
 	public $mini;
+
+	public $actor_image;
 }
 
 /** likesSimpleSchema
