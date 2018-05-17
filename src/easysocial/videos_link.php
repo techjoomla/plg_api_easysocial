@@ -38,8 +38,8 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 
 	/**
 	 * Function for retrieve save video
-	 *
-	 * @return  mixed
+	 * 	 
+	 * @return  JSON	 
 	 */
 	private function saveVideo()
 	{
@@ -61,12 +61,20 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 		$res = new stdClass;
 
 		// Determine if this user has the permissions to create video.
-		$access = ES::access();
-		$allowed = $access->get('videos.create');
+		$access 	= ES::access();
+		$allowed	= $access->get('videos.create');
 
 		if (!$allowed)
 		{
 			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_NOT_ALLOW_MESSAGE'));
+		}
+
+		$canCreate = ES::user($log_user);
+		$total = $canCreate->getTotalVideos($post);
+
+		if ($access->exceeded('videos.total', $total) || $access->exceeded('videos.daily', $total))
+		{
+			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_CREATE_EXCEEDED_LIMIT'));
 		}
 
 		if ($post['link'])
