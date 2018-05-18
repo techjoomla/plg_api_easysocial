@@ -38,8 +38,8 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 
 	/**
 	 * Function for retrieve save video
-	 *
-	 * @return  mixed
+	 * 	 
+	 * @return  JSON	 
 	 */
 	private function saveVideo()
 	{
@@ -48,25 +48,33 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 		$es_config = ES::config();
 		$log_user = $this->plugin->get('user')->id;
 
-		$post['category_id'] = $app->input->get('category_id', 0, 'INT');
-		$post['uid'] = $app->input->get('uid', $log_user, 'INT');
-		$post['title'] = $app->input->get('title', '', 'STRING');
-		$post['description'] = $app->input->get('description', '', 'STRING');
-		$post['link'] = $app->input->get('path', '', 'STRING');
-		$post['location'] = $app->input->get('location', '', 'STRING');
-		$post['privacy'] = $app->input->get('privacy', '', 'STRING');
-		$post['type'] = $app->input->get('type', '', 'STRING');
+		$post['category_id']	=	$app->input->get('category_id', 0, 'INT');
+		$post['uid']			=	$app->input->get('uid', $log_user, 'INT');
+		$post['title']			=	$app->input->get('title', '', 'STRING');
+		$post['description']	=	$app->input->get('description', '', 'STRING');
+		$post['link']			=	$app->input->get('path', '', 'STRING');
+		$post['location']		=	$app->input->get('location', '', 'STRING');
+		$post['privacy']		=	$app->input->get('privacy', '', 'STRING');
+		$post['type']			=	$app->input->get('type', '', 'STRING');
 
 		$video = ES::video();
 		$res = new stdClass;
 
 		// Determine if this user has the permissions to create video.
-		$access = ES::access();
-		$allowed = $access->get('videos.create');
+		$access 	= ES::access();
+		$allowed	= $access->get('videos.create');
 
 		if (!$allowed)
 		{
 			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_NOT_ALLOW_MESSAGE'));
+		}
+
+		$canCreate = ES::user($log_user);
+		$total = $canCreate->getTotalVideos($post);
+
+		if ($access->exceeded('videos.total', $total) || $access->exceeded('videos.daily', $total))
+		{
+			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_CREATE_EXCEEDED_LIMIT'));
 		}
 
 		if ($post['link'])
