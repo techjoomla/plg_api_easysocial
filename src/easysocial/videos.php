@@ -56,14 +56,14 @@ class EasysocialApiResourceVideos extends ApiResource
 	/**
 	 * Method getVideos
 	 *
-	 * @return mixed
+	 * @return object videos and Categories
 	 *
 	 * @since 1.0
 	 */
 	private function getVideos()
 	{
-		$log_user = $this->plugin->get('user')->id;
-		$model = ES::model('Videos');
+		$log_user	=	$this->plugin->get('user')->id;
+		$model		=	ES::model('Videos');
 
 		$options = array();
 		$data = array();
@@ -116,7 +116,7 @@ class EasysocialApiResourceVideos extends ApiResource
 		if (!count($res->result->video))
 		{
 			$res->result->video = [];
-			$res->empty_message = JText::_('COM_EASYSOCIAL_VIDEOS_EMPTY_MESSAGE');
+			$res->empty_message = JText::_('PLG_API_EASYSOCIAL_VIDEOS_EMPTY_MESSAGE');
 		}
 
 		$this->plugin->setResponse($res);
