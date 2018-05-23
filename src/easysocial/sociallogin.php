@@ -54,12 +54,12 @@ class EasysocialApiResourceSociallogin extends ApiResource
 		$app               = JFactory::getApplication();
 		$accessToken = $app->input->get('access_token', '', 'STR');
 		$provider    = $app->input->get('provider', '', 'STR');
-		$is_use_jfb = JComponentHelper::isEnabled('com_jfbconnect', true);
 
 		if ($accessToken)
 		{
 			$objFbProfileData = $this->jfbGetUser($accessToken);
 			$userId           = $this->jfbGetUserFromMap($objFbProfileData);
+			$is_use_jfb = JComponentHelper::isEnabled('com_jfbconnect', true);
 
 			if ($userId)
 			{
@@ -84,11 +84,11 @@ class EasysocialApiResourceSociallogin extends ApiResource
 
 				if ($provider == 'facebook')
 				{
-					$this->jfbRegister($accessToken);
+					$this->jfbRegister($accessToken, $provider, $is_use_jfb);
 				}
 				else
 				{
-					$this->jfbRegister($objFbProfileData);
+					$this->jfbRegister($objFbProfileData, $provider, $is_use_jfb);
 				}
 
 				$userId = $this->jfbGetUserFromMap($objFbProfileData);
@@ -139,9 +139,13 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param  STRING  $accessToken  access tocken
 	 *
+	 * @param  STRING  $provider     provider
+	 *
+	 * @param  STRING  $is_use_jfb   is_use_jfb
+	 *
 	 * @return void|object|array
 	 */
-	public function jfbRegister($accessToken)
+	public function jfbRegister($accessToken, $provider, $is_use_jfb)
 	{
 		if ($provider == 'facebook')
 		{
@@ -202,7 +206,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param   OBJECT  $objFbProfileData  profile data
 	 *
-	 * @return true
+	 * @return void|object|array
 	 */
 	public function jfbGetUserFromMap($objFbProfileData)
 	{
@@ -249,7 +253,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param   OBJECT  $accessToken  accessToken
 	 *
-	 * @return void|object|array
+	 * @return  true
 	 */
 	public function jfbGetUser($accessToken)
 	{
@@ -500,15 +504,6 @@ class EasysocialApiResourceSociallogin extends ApiResource
 				$username  = explode(" ", $objFbProfileData->name);
 				$firstName = $username[0];
 				$lastName  = $username[1];
-
-				$esocialProfData = array(
-					'BIRTHDAY' => isset($objFbProfileData->birthday) ? $objFbProfileData->birthday : '',
-					'last_name' => $lastName,
-					'first_name' => $firstName,
-					'GENDER' => $objFbProfileData->gender == 'male' ? 1 : 0,
-					'avatar' => $objFbProfileData->picture->data->url
-				);
-				$easysocial      = JPATH_ADMINISTRATOR . '/components/com_easysocial/easysocial.php';
 
 				// Assign badge for the person.
 				$badge = FD::badges();
