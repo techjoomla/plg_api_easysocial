@@ -47,7 +47,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	/**
 	 * Typical view method for MVC based architecture
 	 *
-	 * @return ApiPlugin response object
+	 * @return mixed
 	 */
 	public function post()
 	{
@@ -57,9 +57,9 @@ class EasysocialApiResourceSociallogin extends ApiResource
 
 		if ($accessToken)
 		{
-			$objFbProfileData = $this->jfbGetUser($accessToken);
-			$userId           = $this->jfbGetUserFromMap($objFbProfileData);
+			$objFbProfileData = $this->jfbGetUser($accessToken, $provider);
 			$is_use_jfb = JComponentHelper::isEnabled('com_jfbconnect', true);
+			$userId = $this->jfbGetUserFromMap($objFbProfileData, $is_use_jfb);
 
 			if ($userId)
 			{
@@ -91,7 +91,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 					$this->jfbRegister($objFbProfileData, $provider, $is_use_jfb);
 				}
 
-				$userId = $this->jfbGetUserFromMap($objFbProfileData);
+				$userId = $this->jfbGetUserFromMap($objFbProfileData, $is_use_jfb);
 
 				if ($userId)
 				{
@@ -111,7 +111,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 * @param   STRING  $mesage  error message
 	 * @param   INT     $code    error code
 	 *
-	 * @return void|object|array
+	 * @return  mixed
 	 */
 	public function badRequest($mesage, $code)
 	{
@@ -127,7 +127,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param  INTEGER  $userId  user id
 	 *
-	 * @return void|object|array|integer
+	 * @return mixed
 	 */
 	public function jfbLogin($userId)
 	{
@@ -143,13 +143,13 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param  STRING  $is_use_jfb   is_use_jfb
 	 *
-	 * @return void|object|array|boolean
+	 * @return mixed
 	 */
 	public function jfbRegister($accessToken, $provider, $is_use_jfb)
 	{
 		if ($provider == 'facebook')
 		{
-				$objFbProfileData = $this->jfbGetUser($accessToken);
+				$objFbProfileData = $this->jfbGetUser($accessToken, $provider);
 		}
 		else
 		{
@@ -195,7 +195,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 
 				if ($userId && $is_use_jfb)
 				{
-						$this->jfbCreateUser($userId, $objFbProfileData);
+						$this->jfbCreateUser($userId, $objFbProfileData, $provider, $accessToken);
 				}
 			}
 		}
@@ -206,9 +206,11 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param   OBJECT  $objFbProfileData  profile data
 	 *
-	 * @return integer
+	 * @param   BOOLEAN $is_use_jfb        jfb user
+	 *
+	 * @return  mixed
 	 */
-	public function jfbGetUserFromMap($objFbProfileData)
+	public function jfbGetUserFromMap($objFbProfileData, $is_use_jfb)
 	{
 		$db     = JFactory::getDBO();
 		$query  = $db->getQuery(true);
@@ -252,10 +254,12 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 * function to get user from #_jfbconnect_user_map
 	 *
 	 * @param   OBJECT  $accessToken  accessToken
+	 * 
+	 * @param   STRING  $provider     provider
 	 *
-	 * @return  object
+	 * @return  mixed
 	 */
-	public function jfbGetUser($accessToken)
+	public function jfbGetUser($accessToken, $provider)
 	{
 		if ($provider == 'facebook')
 		{
@@ -284,10 +288,12 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param   OBJECT  $jUserId           user id
 	 * @param   OBJECT  $objFbProfileData  profile data
+	 * @param   STRING  $provider          provider
+	 * @param   STRING  $accessToken       access tocken
 	 *
-	 * @return void|object|array
+	 * @return  mixed
 	 */
-	public function jfbCreateUser($jUserId, $objFbProfileData)
+	public function jfbCreateUser($jUserId, $objFbProfileData, $provider, $accessToken)
 	{
 		$db    = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -337,7 +343,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 * @param   STRING  $url     8get profile url
 	 * @param   STRING  $params  profile scopes
 	 *
-	 * @return tru
+	 * @return  mixed
 	 */
 	public function makeRequest($url, $params)
 	{
@@ -361,7 +367,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param   INT  $userId  user id
 	 *
-	 * @return viod
+	 * @return  mixed
 	 */
 	public function keygen($userId)
 	{
@@ -415,7 +421,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param   STRING  $username  username
 	 *
-	 * @return user obj
+	 * @return  mixed
 	 */
 	public function checkUserNameIsExist($username)
 	{
@@ -437,7 +443,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 * @param   STRING  $email             email
 	 * @param   STRING  $objFbProfileData  objFbProfileData
 	 *
-	 * @return user obj
+	 * @return  mixed
 	 */
 	public function joomlaCreateUser($username, $name, $email, $objFbProfileData)
 	{
@@ -502,8 +508,6 @@ class EasysocialApiResourceSociallogin extends ApiResource
 			if ($userid)
 			{
 				$username  = explode(" ", $objFbProfileData->name);
-				$firstName = $username[0];
-				$lastName  = $username[1];
 
 				// Assign badge for the person.
 				$badge = FD::badges();
@@ -518,7 +522,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 * @param   ARRAY   $log_user  log_user
 	 * @param   OBJECT  $fields    fields
 	 *
-	 * @return void|object|array
+	 * @return  mixed
 	 */
 	public function createEsprofile($log_user, $fields)
 	{
@@ -609,7 +613,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 * @param   ARRAY   $fields  fields
 	 * @param   OBJECT  $post    post
 	 *
-	 * @return void|object|array
+	 * @return  mixed
 	 */
 	public function createFieldArr($fields, $post)
 	{
@@ -683,7 +687,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param   ARRAY  $base_dt  base_dt
 	 *
-	 * @return void|object|array
+	 * @return  mixed
 	 */
 	public function sendRegisterEmail($base_dt)
 	{
