@@ -67,7 +67,6 @@ class EasysocialApiResourceReply extends ApiResource
 		$discussId = $mainframe->input->get('discussion_id', 0, 'INT');
 		$limit = $mainframe->input->get('limit', 10, 'INT');
 		$limitstart = $mainframe->input->get('limitstart', 0, 'INT');
-		$valid = 0;
 		$log_user = JFactory::getUser($this->plugin->get('user')->id);
 
 		// Response object
@@ -87,8 +86,6 @@ class EasysocialApiResourceReply extends ApiResource
 		}
 		else
 		{
-			$group = FD::group($group_id);
-
 			// Get the current filter type
 			$filter = $mainframe->input->get('filter', 'all', 'STRING');
 			$options = array();
@@ -115,11 +112,10 @@ class EasysocialApiResourceReply extends ApiResource
 
 			if ($discussId)
 			{
-				$disc_dt = new stdClass;
-
 				// Create discussion details as per request
 				$discussion = FD::table('Discussion');
 				$discussion->load($discussId);
+				$data_node = array();
 				$data_node[] = $discussion;
 				$res->result->discussion = $mapp->mapItem($data_node, 'discussion', $this->plugin->get('user')->id);
 			}
@@ -162,9 +158,6 @@ class EasysocialApiResourceReply extends ApiResource
 		$discussion = FD::table('Discussion');
 		$discussion->load($discuss_id);
 
-		// Get the current logged in user.
-		$my = FD::user($log_user);
-
 		// Get the group
 		$group = FD::group($groupId);
 		$reply  = FD::table('Discussion');
@@ -191,9 +184,9 @@ class EasysocialApiResourceReply extends ApiResource
 	/**
 	 * Method createStream
 	 *
-	 * @param   int     $discussion  discussion id
-	 * @param   int     $group       group id
-	 * @param   string  $reply       reply
+	 * @param   object  $discussion  discussion id
+	 * @param   object  $group       group id
+	 * @param   object  $reply       reply
 	 * @param   int     $log_user    user id
 	 *
 	 * @return string

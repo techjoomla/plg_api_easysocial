@@ -41,7 +41,7 @@ class EasysocialApiResourceFriend extends ApiResource
 	/**
 	 * Method post
 	 *
-	 * @return string
+	 * @return mixed
 	 *
 	 * @since 1.0
 	 */
@@ -53,7 +53,7 @@ class EasysocialApiResourceFriend extends ApiResource
 	/**
 	 * Method Function for delete friend from list
 	 *
-	 * @return string
+	 * @return mixed
 	 *
 	 * @since 1.0
 	 */
@@ -65,7 +65,7 @@ class EasysocialApiResourceFriend extends ApiResource
 	/**
 	 * Method used to delete friend or unfriend.
 	 *
-	 * @return	stdClass	in success object will return
+	 * @return	mixed
 	 *
 	 * @since 1.0
 	 */
@@ -115,7 +115,7 @@ class EasysocialApiResourceFriend extends ApiResource
 	/**
 	 * Method function use for get friends data
 	 *
-	 * @return string
+	 * @return mixed
 	 *
 	 * @since 1.0
 	 */
@@ -169,7 +169,7 @@ class EasysocialApiResourceFriend extends ApiResource
 	 */
 	public function basefrndObj($data=null)
 	{
-		if ($data == null)
+		if ($data === null)
 		{
 			return 0;
 		}
@@ -199,7 +199,7 @@ class EasysocialApiResourceFriend extends ApiResource
 	/**
 	 * Method function use for get friends data
 	 *
-	 * @return  stdClass
+	 * @return  mixed
 	 *
 	 * @since 1.0
 	 */
@@ -208,7 +208,6 @@ class EasysocialApiResourceFriend extends ApiResource
 		//  Init variable
 		$app = JFactory::getApplication();
 		$log_user = JFactory::getUser($this->plugin->get('user')->id);
-		$db = JFactory::getDbo();
 		$frnd_id = $app->input->get('target_userid', 0, 'INT');
 		$userid = $log_user->id;
 		$result = new stdClass;
