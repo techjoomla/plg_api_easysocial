@@ -72,10 +72,8 @@ class EasySocialApiMappingHelper
 		{
 			case 'category':
 				return $this->categorySchema($rows);
-				break;
 			case 'group':
 				return $this->groupSchema($rows, $userid);
-				break;
 			case 'page':
 				return $this->pageSchema($rows, $userid);
 				break;

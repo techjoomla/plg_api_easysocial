@@ -47,7 +47,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	/**
 	 * Typical view method for MVC based architecture
 	 *
-	 * @return void|object|array
+	 * @return void|object|array|boolean|number
 	 */
 	public function post()
 	{
@@ -125,9 +125,9 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	/**
 	 * Typical view method for MVC based architecture
 	 *
-	 * @param   INT  $userId  user id
+	 * @param  INT  $userId  user id
 	 *
-	 * @return mixed
+	 * @return void|object|array
 	 */
 	public function jfbLogin($userId)
 	{
@@ -143,7 +143,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param  STRING  $is_use_jfb   is_use_jfb
 	 *
-	 * @return void|object|array
+	 * @return void|object|array|boolean
 	 */
 	public function jfbRegister($accessToken, $provider, $is_use_jfb)
 	{
