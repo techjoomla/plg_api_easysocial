@@ -206,7 +206,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param   OBJECT  $objFbProfileData  profile data
 	 *
-	 * @return void|object|array
+	 * @return integer
 	 */
 	public function jfbGetUserFromMap($objFbProfileData)
 	{
@@ -253,7 +253,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	 *
 	 * @param   OBJECT  $accessToken  accessToken
 	 *
-	 * @return  true
+	 * @return  object
 	 */
 	public function jfbGetUser($accessToken)
 	{
