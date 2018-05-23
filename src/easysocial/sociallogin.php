@@ -47,7 +47,7 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	/**
 	 * Typical view method for MVC based architecture
 	 *
-	 * @return void|object|array|boolean|number
+	 * @return ApiPlugin response object
 	 */
 	public function post()
 	{
@@ -125,9 +125,9 @@ class EasysocialApiResourceSociallogin extends ApiResource
 	/**
 	 * Typical view method for MVC based architecture
 	 *
-	 * @param  INT  $userId  user id
+	 * @param  INTEGER  $userId  user id
 	 *
-	 * @return void|object|array
+	 * @return void|object|array|integer
 	 */
 	public function jfbLogin($userId)
 	{
