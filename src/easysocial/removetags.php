@@ -34,7 +34,6 @@ class EasysocialApiResourceRemoveTags extends ApiResource
 	{
 		$this->plugin->err_code = 405;
 		$this->plugin->err_message = JText::_('PLG_API_EASYSOCIAL_USE_POST_METHOD_MESSAGE');
-		$this->plugin->setApiResponse(null);
 	}
 
 	/**

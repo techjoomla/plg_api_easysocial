@@ -19,7 +19,7 @@ class EasysocialApiResourceBlock extends ApiResource
 {
 	/** Get
 	 *
-	 * @return	array	Error Message
+	 * @return	object
 	 */
 	public function get()
 	{
@@ -28,7 +28,7 @@ class EasysocialApiResourceBlock extends ApiResource
 
 	/** POST
 	 *
-	 * @return  array response object
+	 * @return  object
 	 */
 	public function post()
 	{
