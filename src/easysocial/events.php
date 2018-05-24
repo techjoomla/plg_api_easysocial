@@ -61,7 +61,6 @@ class EasysocialApiResourceEvents extends ApiResource
 		// Getting log_user
 		$log_user = $this->plugin->get('user')->id;
 		$ordering = $this->plugin->get('ordering', 'start', 'STRING');
-		$options = array();
 		$eventResult = array();
 
 		// Response object
@@ -270,6 +269,7 @@ class EasysocialApiResourceEvents extends ApiResource
 				break;
 		}
 
+		$options = array();
 		$options['start-after'] = $start . ' 00:00:00';
 		$options['start-before'] = $end . ' 23:59:59';
 

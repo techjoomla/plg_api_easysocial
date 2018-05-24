@@ -68,8 +68,6 @@ class EasysocialApiResourceSearch extends ApiResource
 
 		$search = $app->input->get('search', '', 'STRING');
 		$type = $app->input->get('type', '', 'STRING');
-		$nxt_lim = $app->input->get('next_limit', 0, 'INT');
-
 		$limitstart = $app->input->get('limitstart', 0, 'INT');
 		$limit = $app->input->get('limit', 10, 'INT');
 
@@ -156,13 +154,8 @@ class EasysocialApiResourceSearch extends ApiResource
 	{
 		$mapp = new EasySocialApiMappingHelper;
 		$userid = $log_user->id;
-
-		$serch_obj = new EasySocialModelSearch;
-
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$frnd_obj = new EasySocialModelFriends;
-
 		$query->select($db->quoteName(array('su.user_id')));
 		$query->from($db->quoteName('#__social_users', 'su'));
 		$query->join('LEFT', $db->quoteName('#__users', 'u') . ' ON (' . $db->quoteName('su.user_id') . ' = ' . $db->quoteName('u.id') . ')');
@@ -227,8 +220,6 @@ class EasysocialApiResourceSearch extends ApiResource
 		$query1->order($db->quoteName('cl.id') . 'ASC');
 		$db->setQuery($query1);
 		$edata = $db->loadObjectList();
-
-		$event_model = FD::model('Events');
 		$event = array();
 
 		foreach ($edata as $ent)
@@ -367,7 +358,7 @@ class EasysocialApiResourceSearch extends ApiResource
 	/**
 	 * Method Format friends object into required object
 	 *
-	 * @param   string  $data  data
+	 * @param   object  $data  data
 	 *
 	 * @return  mixed
 	 *
@@ -375,7 +366,7 @@ class EasysocialApiResourceSearch extends ApiResource
 	 */
 	public function createSearchObj($data = null)
 	{
-		if ($data == null)
+		if ($data === null)
 		{
 			return $data;
 		}
@@ -384,6 +375,7 @@ class EasysocialApiResourceSearch extends ApiResource
 
 		$user = JFactory::getUser($this->plugin->get('user')->id);
 		$frnd_mod = new EasySocialModelFriends;
+		$options = array();
 		$options['state'] = SOCIAL_FRIENDS_STATE_PENDING;
 		$options['isRequest'] = true;
 
@@ -404,7 +396,6 @@ class EasysocialApiResourceSearch extends ApiResource
 				$node->mutual = $frnd_mod->getMutualFriendCount($user->id, $node->id);
 				$node->isFriend = $frnd_mod->isFriends($user->id, $node->id);
 				$node->approval_pending = $frnd_mod->isPendingFriends($user->id, $node->id);
-
 				$node->isinitiator = (in_array($node->id, $myarr)) ? true : false;
 			}
 		}

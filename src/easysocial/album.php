@@ -36,7 +36,7 @@ class EasysocialApiResourceAlbum extends ApiResource
 
 	/** POST Call
 	 *
-	 * @return	array	message
+	 * @return	mixed
 	 */
 	public function post()
 	{
@@ -54,7 +54,7 @@ class EasysocialApiResourceAlbum extends ApiResource
 
 	/** switch case for photo delete or album delete.
 	 *
-	 * @return  ApiPlugin response object
+	 * @return  mixed
 	 */
 	private function deleteCheck()
 	{
@@ -76,11 +76,10 @@ class EasysocialApiResourceAlbum extends ApiResource
 	/**
 	 * This function is use to delete photo from album
 	 *
-	 * @return	array messages
+	 * @return	mixed
 	 */
 	private function deletePhoto()
 	{
-		$user = JFactory::getUser($this->plugin->get('user')->id);
 		$app = JFactory::getApplication();
 		$id = $app->input->get('id', 0, 'INT');
 
@@ -117,7 +116,7 @@ class EasysocialApiResourceAlbum extends ApiResource
 	/**
 	 * This function is used to get the photos from particular album
 	 *
-	 * @return	array		Album Images*
+	 * @return	mixed
 	 */
 	private function getAlbumImages()
 	{
@@ -125,10 +124,10 @@ class EasysocialApiResourceAlbum extends ApiResource
 		$app = JFactory::getApplication();
 		$album_id = $app->input->get('album_id', 0, 'INT');
 		$uid = $app->input->get('uid', 0, 'INT');
-		$state = $app->input->get('state', 0, 'INT');
 		$log_user = $this->plugin->get('user')->id;
 		$limitstart = $app->input->get('limitstart', 0, 'INT');
 		$limit = $app->input->get('limit', 10, 'INT');
+		$mydata = array();
 		$mydata['album_id'] = $album_id;
 		$mydata['uid'] = $uid;
 		$mydata['start'] = $limitstart;
@@ -254,13 +253,6 @@ class EasysocialApiResourceAlbum extends ApiResource
 		// Set the album creation alias
 		$album->assigned_date = ES::date()->toMySQL();
 
-		// Set custom date
-		if (isset($post['date']))
-		{
-			$album->assigned_date = $post[ 'date' ];
-			unset($post['date']);
-		}
-
 		// Set the user creator
 		$album->user_id = $uid;
 
@@ -287,6 +279,6 @@ class EasysocialApiResourceAlbum extends ApiResource
 			$album->store();
 		}
 
-		return $this->plugin->setResponse($album);
+		$this->plugin->setResponse($album);
 	}
 }

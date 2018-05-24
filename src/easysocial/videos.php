@@ -48,24 +48,21 @@ class EasysocialApiResourceVideos extends ApiResource
 	public function post()
 	{
 		$app = JFactory::getApplication();
-		$type = $app->input->get('source', 'upload', 'STRING');
-		$result = $this->uploadVideos($type);
+		$result = $this->uploadVideos();
 		$this->plugin->setResponse($result);
 	}
 
 	/**
 	 * Method getVideos
 	 *
-	 * @return object videos and Categories
+	 * @return mixed
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 */
 	private function getVideos()
 	{
 		$log_user	=	$this->plugin->get('user')->id;
 		$model		=	ES::model('Videos');
-
-		$options = array();
 		$data = array();
 
 		// Response object
@@ -150,29 +147,20 @@ class EasysocialApiResourceVideos extends ApiResource
 	/**
 	 * Upload video in throught api
 	 *
-	 * @param   object  $type  type
-	 *
 	 * @return object error message and code
 	 *
 	 * @since 1.0
 	 */
-	private function uploadVideos($type)
+	private function uploadVideos()
 	{
 		$app = JFactory::getApplication();
 		$res = new stdClass;
-		$es_config = ES::config();
 
 		$id = $app->input->get('id', 0, 'int');
 		$action = $app->input->get('action', '', 'STRING');
 		$table = ES::table('Video');
 		$table->load($id);
-
 		$video = ES::video($table->uid, $table->type, $table);
-		$user = JFactory::getUser();
-
-		// $isAdmin = $user->authorise('core.admin');
-		// Get the callback url
-		$callback = $app->input->get('return', '', 'default');
 
 		if ($action == "featured")
 		{
@@ -215,6 +203,7 @@ class EasysocialApiResourceVideos extends ApiResource
 			$videoEdit = ES::video($video);
 
 			// Save the video
+			$post = array();
 			$post['category_id'] = $app->input->get('category_id', 0, 'INT');
 			$post['uid'] = $app->input->get('uid', 0, 'INT');
 			$post['title'] = $app->input->get('title', '', 'STRING');
@@ -223,8 +212,7 @@ class EasysocialApiResourceVideos extends ApiResource
 			$post['tags'] = $app->input->get('tags', '', 'ARRAY');
 			$post['location'] = $app->input->get('location', '', 'STRING');
 			$post['privacy'] = $app->input->get('privacy', '', 'STRING');
-
-			$state = $videoEdit->save($post);
+			$videoEdit->save($post);
 
 			$res->result->success = 1;
 			$res->result->message = JText::_('COM_EASYSOCIAL_VIDEOS_UPDATED_SUCCESS');

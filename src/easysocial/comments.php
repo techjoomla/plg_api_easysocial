@@ -126,7 +126,7 @@ class EasysocialApiResourceComments extends ApiResource
 			ApiError::raiseError(400, JText::_('PLG_API_EASYSOCIAL_COMMENT_SAVE_UNSUCCESS_MESSAGE'));
 		}
 
-		return $this->plugin->setResponse($res);
+		$this->plugin->setResponse($res);
 	}
 
 	/** GetComments

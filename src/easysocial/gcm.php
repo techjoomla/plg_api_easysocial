@@ -71,12 +71,8 @@ class EasysocialApiResourceGcm extends ApiResource
 		$result = new stdClass;
 		$state = false;
 		$app = JFactory::getApplication();
-		$log_user = $this->plugin->get('user')->id;
 		$dev_id = $app->input->get('device_id', '', 'RAW');
 		$nval = $app->input->get('notify_val', 1, 'INT');
-
-		// DB Create steps
-		$db = FD::db();
 
 		if ($dev_id == "null" || $dev_id == null)
 		{
@@ -85,7 +81,7 @@ class EasysocialApiResourceGcm extends ApiResource
 		}
 		else
 		{
-			$state = $this->tnotify($log_user, $dev_id, $nval);
+			$state = $this->tnotify($dev_id, $nval);
 			$result->success = $state;
 			$result->message = ($state && $nval) ? JText::_('PLG_API_EASYSOCIAL_NOTIFICATION_ON') : JText::_('PLG_API_EASYSOCIAL_NOTIFICATION_OFF');
 		}
@@ -96,7 +92,6 @@ class EasysocialApiResourceGcm extends ApiResource
 	/**
 	 * Method this common function is for getting dates for month,year,today,tomorrow filters.
 	 *
-	 * @param   string  $log_user  user id
 	 * @param   string  $dev_id    device id
 	 * @param   string  $val       date
 	 *
@@ -104,7 +99,7 @@ class EasysocialApiResourceGcm extends ApiResource
 	 *
 	 * @since 1.0
 	 */
-	public function tnotify($log_user, $dev_id , $val)
+	public function tnotify($dev_id , $val)
 	{
 		// DB Create steps
 		$db = FD::db();
@@ -115,7 +110,7 @@ class EasysocialApiResourceGcm extends ApiResource
 		$query_a = "UPDATE #__acpush_users SET active = " . $val . " WHERE id = " . $id;
 		$db->setQuery($query_a);
 
-		return $val = $db->query();
+		return $db->query();
 	}
 
 	/**
@@ -147,7 +142,6 @@ class EasysocialApiResourceGcm extends ApiResource
 		$db = FD::db();
 
 		// Create a new query object.
-		$query = $db->getQuery(true);
 		$inserquery = $db->getQuery(true);
 
 		// Get date.
