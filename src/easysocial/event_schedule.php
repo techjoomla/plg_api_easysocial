@@ -56,7 +56,6 @@ class EasysocialApiResourceEvent_Schedule extends ApiResource
 	public function getSchedule()
 	{
 		$app = JFactory::getApplication();
-		$log_user = $this->plugin->get('user')->id;
 		$event_id = $app->input->get('event_id', 0, 'INT');
 		$event = FD::event($event_id);
 		$options = array();

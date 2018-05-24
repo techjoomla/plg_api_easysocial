@@ -25,11 +25,11 @@ require_once JPATH_SITE . '/plugins/api/easysocial/libraries/uploadHelper.php';
 class EasysocialApiResourcePage extends ApiResource
 {
 	/**
-	 * Method description
+	 * Method   description
 	 *
-	 * @return	mixed
+	 * @return  mixed
 	 *
-	 * @since 1.0
+	 * @since   1.0
 	 */
 	public function get()
 	{
@@ -58,11 +58,11 @@ class EasysocialApiResourcePage extends ApiResource
 	}
 
 	/**
-	 * Method description
+	 * Method   description
 	 *
 	 * @return  mixed
 	 *
-	 * @since 1.0
+	 * @since   1.0
 	 */
 	public function post()
 	{
@@ -70,11 +70,11 @@ class EasysocialApiResourcePage extends ApiResource
 	}
 
 	/**
-	 * Method description
+	 * Method   description
 	 *
-	 * @return	mixed
+	 * @return  mixed
 	 *
-	 * @since 1.0
+	 * @since   1.0
 	 */
 	public function delete()
 	{

@@ -72,7 +72,6 @@ class EasysocialApiResourceGroup_Category extends ApiResource
 		$userid = ($other_user_id) ? $other_user_id : $log_user;
 
 		$mapp = new EasySocialApiMappingHelper;
-		$user = FD::user($userid);
 
 		$res = new stdclass;
 		$res->result = array();
