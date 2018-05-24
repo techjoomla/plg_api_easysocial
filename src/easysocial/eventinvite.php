@@ -25,11 +25,11 @@ require_once JPATH_ADMINISTRATOR . '/components/com_easysocial/includes/foundry.
 class EasysocialApiResourceEventinvite extends ApiResource
 {
 	/**
-	 * Method description
+	 * Method   description
 	 *
 	 * @return  mixed
 	 *
-	 * @since 1.0
+	 * @since   1.0
 	 */
 	public function get()
 	{
@@ -37,11 +37,11 @@ class EasysocialApiResourceEventinvite extends ApiResource
 	}
 
 	/**
-	 * Method description
+	 * Method   description
 	 *
 	 * @return  mixed
 	 *
-	 * @since 1.0
+	 * @since   s1.0
 	 */
 	public function post()
 	{
@@ -49,11 +49,11 @@ class EasysocialApiResourceEventinvite extends ApiResource
 	}
 
 	/**
-	 * Method invite friend to event.
+	 * Method   invite friend to event.
 	 *
 	 * @return  mixed
 	 *
-	 * @since 1.0
+	 * @since   1.0
 	 */
 	public function invite()
 	{
@@ -63,7 +63,6 @@ class EasysocialApiResourceEventinvite extends ApiResource
 		$result = new stdClass;
 		$event_id = $app->input->get('event_id', 0, 'INT');
 		$target_users = $app->input->get('target_users', null, 'ARRAY');
-		$user = FD::user($log_user->id);
 		$event = FD::event($event_id);
 		$guest = $event->getGuest($log_user->id);
 

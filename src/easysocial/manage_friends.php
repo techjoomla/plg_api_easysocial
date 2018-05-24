@@ -62,7 +62,6 @@ class EasysocialApiResourceManage_Friends extends ApiResource
 		$app = JFactory::getApplication();
 
 		$log_user = JFactory::getUser($this->plugin->get('user')->id);
-		$db = JFactory::getDbo();
 		$frnd_id = $app->input->post->get('friend_id', 0, 'INT');
 		$choice = $app->input->post->get('choice', 0, 'INT');
 		$userid = $log_user->id;
@@ -92,7 +91,7 @@ class EasysocialApiResourceManage_Friends extends ApiResource
 		}
 		else
 		{
-			$user = FD::user($id);
+			$user = FD::user($userid);
 			$user->approve();
 			$res->result = EasySocialModelUsers::deleteFriends($frnd_id);
 

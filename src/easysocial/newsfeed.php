@@ -68,7 +68,6 @@ class EasysocialApiResourceNewsfeed extends ApiResource
 		// Code for get non sef urls
 		$jrouter = JFactory::getApplication()->getRouter();
 		$jrouter->setMode(JROUTER_MODE_RAW);
-		$log_user = JFactory::getUser($this->plugin->get('user')->id);
 		$group_id = $app->input->get('group_id', 0, 'INT');
 		$event_id = $app->input->get('event_id', 0, 'INT');
 		$page_id = $app->input->get('page_id', 0, 'INT');
@@ -82,7 +81,7 @@ class EasysocialApiResourceNewsfeed extends ApiResource
 		// Get tag
 		$tag = $app->input->get('tag', '', 'STRING');
 		$config = JFactory::getConfig();
-		$sef = $config->set('sef', 0);
+		$config->set('sef', 0);
 
 		$res = new stdClass;
 
@@ -124,8 +123,6 @@ class EasysocialApiResourceNewsfeed extends ApiResource
 					$options['ignoreUser'] = true;
 					$options['view'] = $view;
 					break;
-
-				case 'following':
 				case 'follow':
 					$options['type'] = 'follow';
 					break;

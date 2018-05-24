@@ -181,7 +181,6 @@ class EasysocialApiResourceGroupinvite extends ApiResource
 		$res = new stdClass;
 		$group_id = $app->input->get('group_id', 0, 'INT');
 		$target_users = $app->input->get('target_users', null, 'ARRAY');
-		$user = ES::user($log_user->id);
 		$grp_model = ES::model('Groups');
 		$group = ES::group($group_id);
 
@@ -203,7 +202,7 @@ class EasysocialApiResourceGroupinvite extends ApiResource
 				// Check that the user is not a member or has been invited already
 				if (!$group->isMember($id) && !$grp_model->isInvited($id, $group_id))
 				{
-					$state = $group->invite($id, $log_user->id);
+					$group->invite($id, $log_user->id);
 					$invited[] = $target_username;
 				}
 				else
