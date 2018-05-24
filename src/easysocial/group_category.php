@@ -69,10 +69,7 @@ class EasysocialApiResourceGroup_Category extends ApiResource
 		$app = JFactory::getApplication();
 		$log_user = $this->plugin->get('user')->id;
 		$other_user_id = $app->input->get('user_id', 0, 'INT');
-		$userid = ($other_user_id) ? $other_user_id : $log_user;
-
 		$mapp = new EasySocialApiMappingHelper;
-
 		$res = new stdclass;
 		$res->result = array();
 		$res->empty_message = '';

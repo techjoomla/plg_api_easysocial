@@ -31,7 +31,7 @@ class EasysocialApiResourceAlbum extends ApiResource
 	 */
 	public function get()
 	{
-		return $this->getAlbumImages();
+		$this->getAlbumImages();
 	}
 
 	/** POST Call
@@ -40,7 +40,7 @@ class EasysocialApiResourceAlbum extends ApiResource
 	 */
 	public function post()
 	{
-		return $this->createAlbum();
+		$this->createAlbum();
 	}
 
 	/** DELETE Call

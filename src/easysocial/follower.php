@@ -71,7 +71,7 @@ class EasysocialApiResourceFollower extends ApiResource
 			$res->result->status = 0;
 			$res->result->message = JText::_('PLG_API_EASYSOCIAL_CANT_FOLLOW_YOURSELF_MESSAGE');
 
-			$this->plugin->setResponse($res);
+			return $this->plugin->setResponse($res);
 		}
 
 		// Load subscription table.
@@ -309,8 +309,7 @@ class EasysocialApiResourceFollower extends ApiResource
 		if (count($fllowers_list) < 1)
 		{
 			$res->empty_message = JText::_('COM_EASYSOCIAL_NO_FOLLOWERS_YET');
-
-			$this->plugin->setResponse($res);
+			return $this->plugin->setResponse($res);
 		}
 
 		$res->result = $fllowers_list;

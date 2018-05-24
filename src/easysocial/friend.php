@@ -35,7 +35,7 @@ class EasysocialApiResourceFriend extends ApiResource
 	 */
 	public function get()
 	{
-		return $this->getFriends();
+		$this->getFriends();
 	}
 
 	/**
@@ -47,7 +47,7 @@ class EasysocialApiResourceFriend extends ApiResource
 	 */
 	public function post()
 	{
-		return $this->manageFriends();
+		$this->manageFriends();
 	}
 
 	/**
@@ -59,7 +59,7 @@ class EasysocialApiResourceFriend extends ApiResource
 	 */
 	public function delete()
 	{
-		return $this->deletefriend();
+		$this->deletefriend();
 	}
 
 	/**

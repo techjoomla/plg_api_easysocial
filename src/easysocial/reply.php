@@ -55,9 +55,9 @@ class EasysocialApiResourceReply extends ApiResource
 	/**
 	 * Method function use for get friends data
 	 *
-	 * @return  mixed
+	 * @return  $this->plugin->setResponse($res);
 	 *
-	 * @since 1.0
+	 * @since   1.0
 	 */
 	private function getDiscussionReply()
 	{

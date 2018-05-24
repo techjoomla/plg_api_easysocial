@@ -208,9 +208,6 @@ class EasysocialApiResourceEvent extends ApiResource
 		}
 
 		$data = $registry->toArray();
-
-		// Load up the fields library so we can trigger the field apps
-		$fieldsLib = ES::fields();
 		$stepSession->values = $json->encode($data);
 
 		$stepSession->store();
@@ -283,7 +280,7 @@ class EasysocialApiResourceEvent extends ApiResource
 	 * Method createData
 	 *
 	 * @param   string  $field_ids  field id
-	 * @param   string  $post       post
+	 * @param   array  $post       post
 	 * @return  mixed
 	 *
 	 * @since 1.0
