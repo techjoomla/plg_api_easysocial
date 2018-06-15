@@ -38,9 +38,7 @@ class EasysocialApiResourceLike extends ApiResource
 	 */
 	public function get()
 	{
-		$this->plugin->err_code = 405;
-		$this->plugin->err_message = JText::_('PLG_API_EASYSOCIAL_USE_POST_METHOD_MESSAGE');
-		$this->plugin->setResponse(null);
+		$this->getLikes();
 	}
 
 	/**
@@ -144,6 +142,44 @@ class EasysocialApiResourceLike extends ApiResource
 		// $res->data = ($state && $verb == 'like')?$model->getLikesCount($id, $type):0;
 		$res->result->message = ($state) ? $verb . JText::_('PLG_API_EASYSOCIAL_SUCCESSFULL') : $verb . JText::_('PLG_API_EASYSOCIAL_UNSUCCESSFULL');
 
+		$this->plugin->setResponse($res);
+	}
+
+	/**
+	 * Method function use for get users like list
+	 *
+	 * @return  mixed
+	 *
+	 * @since 2.2.1
+	 */
+	private function getLikes()
+	{
+		$app = JFactory::getApplication();
+		$log_user = JFactory::getUser($this->plugin->get('user')->id);
+		$stream_id = $app->input->get('stream_id', 0, 'INT');
+		$type = $app->input->get('type', '', 'STRING');
+		$filter = $app->input->get('filter', '', 'STRING');
+		$limit = $app->input->get('limit', 10, 'INT');
+		$limitstart = $app->input->get('limitstart', 0, 'INT');
+
+		$tmp = array();
+		$res = new stdClass;
+		$mapp = new EasySocialApiMappingHelper;
+
+		$model = ES::model('Likes');
+		$likes = $model->getLikerIds($stream_id, $type, $exclude = array());
+
+		if ($limit)
+		{
+			$likes = array_slice($likes, $limitstart, $limit);
+		}
+
+		foreach ($likes as $key => $value)
+		{
+			$likes[$key] = $mapp->createUserObj($value);
+		}
+
+		$res->result = $likes;
 		$this->plugin->setResponse($res);
 	}
 }
