@@ -79,6 +79,7 @@ class EasysocialApiResourceGroups extends ApiResource
 		JFactory::getApplication()->input->post->set('limitstart', $limitstart);
 
 		// Set default filters
+		$options = array();
 		$options['state'] = isset($filters['state']) ? $filters['state'] : SOCIAL_CLUSTER_PUBLISHED;
 		$options['types'] = isset($filters['types']) ? $filters['types'] : $user->isSiteAdmin() ? 'all' : 'user';
 		$options['ordering'] = isset($filters['ordering']) ? $filters['ordering'] : 'latest';

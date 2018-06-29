@@ -81,8 +81,6 @@ class EasysocialApiResourceGroup_Members extends ApiResource
 
 		// For filter user by type
 		$type = $app->input->get('type', 'group', 'STRING');
-		$state = $app->input->get('state', 1, 'INT');
-		$getAdmin = $app->input->get('admin', 1, 'INT');
 
 		if ($type === 'group' || $type === 'page')
 		{

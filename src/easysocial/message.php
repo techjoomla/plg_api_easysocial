@@ -101,6 +101,7 @@ class EasysocialApiResourceMessage extends ApiResource
 		if ($conversion_id)
 		{
 			$conversation = ES::conversation($conversion_id);
+			$post_data = array();
 			$post_data['uid'] = $recipients;
 			$post_data['message'] = $msg;
 			$conversation->bind($post_data);
@@ -128,7 +129,7 @@ class EasysocialApiResourceMessage extends ApiResource
 	 * @param   int     $log_usr     logged in user id
 	 * @param   string  $msg         message
 	 *
-	 * @return string
+	 * @return mixed
 	 *
 	 * @since 1.0
 	 */
@@ -142,6 +143,7 @@ class EasysocialApiResourceMessage extends ApiResource
 			return false;
 		}
 
+		$post_data = array();
 		$post_data['uid'] = $recipients;
 		$post_data['message'] = $msg;
 		$conversation->bind($post_data);
@@ -196,7 +198,6 @@ class EasysocialApiResourceMessage extends ApiResource
 		$maxlimit = $app->input->get('maxlimit', 100, 'INT');
 		$filter = $app->input->get('filter', null, 'STRING');
 		$mapp = new EasySocialApiMappingHelper;
-		$user = ES::user($log_user->id);
 		$res = new stdclass;
 		$res->result = array();
 		$res->empty_message = '';
@@ -207,6 +208,7 @@ class EasysocialApiResourceMessage extends ApiResource
 
 		if ($conversation_id)
 		{
+			$data = array();
 			$data['participant'] = $this->getParticipantUsers($conversation_id);
 			$msg_data = $conv_model->setLimit($limit)->getMessages($conversation_id, $log_user->id);
 			$res->result = $mapp->mapItem($msg_data, 'message', $log_user->id);
@@ -246,9 +248,9 @@ class EasysocialApiResourceMessage extends ApiResource
 	/**
 	 * Method getParticipantUsers
 	 *
-	 * @param   int  $con_id  Conversation ID
+	 * @param  int  $con_id  Conversation ID
 	 *
-	 * @return string
+	 * @return mixed
 	 *
 	 * @since 1.0
 	 */

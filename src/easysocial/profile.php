@@ -72,7 +72,6 @@ class EasysocialApiResourceProfile extends ApiResource
 		$userid = ($other_user_id) ? $other_user_id : $log_user;
 
 		$res = new stdClass;
-		$data = array();
 		$user = FD::user($userid);
 
 		if ($user->id == 0)
@@ -132,24 +131,8 @@ class EasysocialApiResourceProfile extends ApiResource
 				}
 			}
 
-			$friendmodel = FD::model('Friends');
 			$friendsObj = ES::friends($other_user_id, $log_user);
 			$user_obj->isrequestor = $friendsObj->isRequester();
-
-			/*
-			 * $pending_req = $friendmodel->getPendingRequests($log_user);
-			   $user_obj->isrequestor=false;
-
-				if($pending_req)
-				{
-					foreach($pending_req as $pr)
-					{
-						if($pr->actor_id == $other_user_id)
-						$user_obj->isrequestor=true;
-					}
-				}
-			*/
-
 			$user_obj->more_info[] = $field_arr;
 		}
 

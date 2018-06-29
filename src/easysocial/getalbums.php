@@ -64,6 +64,7 @@ class EasysocialApiResourceGetalbums extends ApiResource
 		// Taking values in array for pagination of albums.
 		// $mydata['limitstart']=$limitstart;
 
+		$mydata = array();
 		$mydata['excludeblocked'] = 1;
 		$mydata['pagination'] = 1;
 

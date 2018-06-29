@@ -70,11 +70,8 @@ class EasysocialApiResourceRequest extends ApiResource
 		$req_val	= $app->input->get('request', '', 'STRING');
 		$other_user_id	= $app->input->get('target_user', 0, 'INT');
 		$type		= $app->input->get('type', 'group', 'STRING');
-
-		$data = array();
 		$req_val = ($req_val == 'cancel') ? 'reject' : $req_val;
 
-		$user = FD::user($other_user_id);
 		$res  = new stdClass;
 
 		if (!$clusterId || !$other_user_id)
@@ -149,8 +146,6 @@ class EasysocialApiResourceRequest extends ApiResource
 				$guest = FD::table('EventGuest');
 				$state = $guest->load($other_user_id);
 				$event = FD::event($clusterId);
-				$my    = FD::user($log_user->id);
-				$myGuest = $event->getGuest();
 				$res->success = 0;
 
 				if (!$state || empty($guest->id))

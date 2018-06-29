@@ -59,15 +59,11 @@ class EasysocialApiResourceEvent_Guest extends ApiResource
 	{
 		$app = JFactory::getApplication();
 
-		// Getting log_user.
-		$log_user = $this->plugin->get('user')->id;
-
 		// Get event id,limit,limitstart.
 		$event_id = $app->input->get('event_id', 0, 'INT');
 		$limitstart = $app->input->get('limitstart', 0, 'INT');
 		$limit = $app->input->get('limit', 10, 'INT');
 		$options = array();
-		$ordering = $this->plugin->get('ordering', 'name', 'STRING');
 		$state = $app->input->get('state', '', 'STRING');
 		$mapp = new EasySocialApiMappingHelper;
 		$eguest = FD::model('Events');

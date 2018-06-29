@@ -44,10 +44,8 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 	private function saveVideo()
 	{
 		$app = JFactory::getApplication();
-		$res = new stdClass;
-		$es_config = ES::config();
 		$log_user = $this->plugin->get('user')->id;
-
+		$post = array();
 		$post['category_id']	=	$app->input->get('category_id', 0, 'INT');
 		$post['uid']			=	$app->input->get('uid', $log_user, 'INT');
 		$post['title']			=	$app->input->get('title', '', 'STRING');
@@ -85,7 +83,6 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 			(?:youtube\.com|youtu\.be|vimeo\.com)  # Mandatory domain name
 			/watch\?v=([^&]+)           # URI with video id as capture group 1
 			~x';
-			$has_match = preg_match($rx, $post['link'], $matches);
 		}
 
 		$isNew = $video->isNew();
@@ -119,7 +116,7 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 		}
 
 		// Save the video
-		$state = $video->table->store();
+		$video->table->store();
 
 		// Bind the video location
 		if (isset($post['location']) && $post['location'] && isset($post['latitude']) && $post['latitude'] && isset($post['longitude'])

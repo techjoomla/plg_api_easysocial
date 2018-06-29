@@ -32,7 +32,7 @@ class EasysocialApiResourceFriends extends ApiResource
 	 */
 	public function get()
 	{
-		return $this->getFriends();
+		$this->getFriends();
 	}
 
 	/**
@@ -46,8 +46,7 @@ class EasysocialApiResourceFriends extends ApiResource
 	{
 		$this->plugin->err_code = 405;
 		$this->plugin->err_message = JText::_('PLG_API_EASYSOCIAL_USE_GET_METHOD_MESSAGE');
-
-		return $this->plugin->setResponse(null);
+		$this->plugin->setResponse(null);
 	}
 
 	/**
@@ -55,12 +54,12 @@ class EasysocialApiResourceFriends extends ApiResource
 	 *
 	 * @return  mixed
 	 *
-	 * @since 1.0
+	 * @since   1.0
 	 */
 	public function getFriends()
 	{
 		$avt_model = FD::model('Avatars');
-		$default = $avt_model->getDefaultAvatars(0, $type = SOCIAL_TYPE_PROFILES);
+		$avt_model->getDefaultAvatars(0, $type = SOCIAL_TYPE_PROFILES);
 
 		// Init variable
 		$app = JFactory::getApplication();
@@ -88,6 +87,7 @@ class EasysocialApiResourceFriends extends ApiResource
 
 		// $frnd_mod->setState('limitstart',$limitstart);
 		$ttl_list = array();
+		$options = array();
 		$options['state'] = SOCIAL_FRIENDS_STATE_FRIENDS;
 		$flag =	0;
 
@@ -143,7 +143,7 @@ class EasysocialApiResourceFriends extends ApiResource
 			case 'invites':
 
 				// Getting invited friends
-
+				$invites = array();
 				$invites['data'] = $frnd_mod->getInvitedUsers($userid);
 				$mssg = JText::_('PLG_API_EASYSOCIAL_NO_INVITATION');
 
@@ -181,6 +181,7 @@ class EasysocialApiResourceFriends extends ApiResource
 		{
 			$res->result = $mapp->mapItem($ttl_list, 'user', $userid);
 			$res->result = $mapp->frnd_nodes($res->result, $user);
+			$myoptions = array();
 			$myoptions['state'] = SOCIAL_FRIENDS_STATE_PENDING;
 			$myoptions['isRequest'] = true;
 			$req = $frnd_mod->getFriends($user->id, $myoptions);

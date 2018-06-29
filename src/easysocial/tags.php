@@ -100,12 +100,12 @@ class EasysocialApiResourceTags extends ApiResource
 		$video = ES::video($table->uid, $table->type, $table);
 
 		// Insert the user tags
-		$tags = $video->insertTags($friends_tags);
+		$video->insertTags($friends_tags);
 
 		$video = ES::video();
 		$video->load($cluster);
 		$model = ES::model('Tags');
-		$tag_peoples = $model->getTags($videoid, SOCIAL_TYPE_VIDEO);
+		$tag_peoples = $model->getTags($video->id, SOCIAL_TYPE_VIDEO);
 
 		$this->plugin->setResponse($tag_peoples);
 	}

@@ -26,7 +26,7 @@ class EasysocialApiResourceDiscussion extends ApiResource
 {
 	/** Get
 	 *
-	 * @return	array	Discussions
+	 * @return	object|boolean
 	 */
 	public function get()
 	{
@@ -35,7 +35,7 @@ class EasysocialApiResourceDiscussion extends ApiResource
 
 	/** POST
 	 *
-	 * @return	array	Message
+	 * @return	object|boolean
 	 */
 	public function post()
 	{
@@ -54,7 +54,6 @@ class EasysocialApiResourceDiscussion extends ApiResource
 		$appId = $app->input->get('discussion_id', 0, 'INT');
 		$discussion = ES::table('Discussion');
 		$discussion->load($appId);
-		$my = ES::user();
 		$group = ES::group($group_id);
 
 		if (!$group->isAdmin() && $discussion->created_by != $this->plugin->get('user')->id)
@@ -91,7 +90,6 @@ class EasysocialApiResourceDiscussion extends ApiResource
 		$appId = $mainframe->input->get('discussion_id', 0, 'INT');
 		$limitstart = $mainframe->input->get('limitstart', 0, 'INT');
 		$limit = $mainframe->input->get('limit', 10, 'INT');
-		$valid = 0;
 
 		// Response object
 		$res = new stdclass;

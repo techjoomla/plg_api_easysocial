@@ -45,7 +45,7 @@ class EasysocialApiResourceShare extends ApiResource
 	/**
 	 * Method description
 	 *
-	 * @return  mixed
+	 * @return  string
 	 *
 	 * @since 1.0
 	 */
@@ -276,6 +276,7 @@ class EasysocialApiResourceShare extends ApiResource
 				case 'photos':
 					$photo_obj = $this->uploadPhoto($log_usr, 'user');
 					$photo_ids[] = $photo_obj->id;
+					$photo_ids = array();
 					$contextIds = (count($photo_ids)) ? $photo_ids : null;
 				break;
 				case 'videos':
@@ -283,9 +284,6 @@ class EasysocialApiResourceShare extends ApiResource
 				case 'story':
 					break;
 			}
-
-			// Process moods here
-			$mood = ES::table('Mood');
 
 			// Options that should be sent to the stream lib
 			$args = array(
@@ -303,7 +301,6 @@ class EasysocialApiResourceShare extends ApiResource
 							'privacyCustom' => $customPrivacy
 					);
 
-			$photo_ids = array();
 			$args['actorId'] = $log_usr;
 			$args['contextIds'] = $contextIds;
 			$args['contextType'] = $type;
@@ -357,7 +354,7 @@ class EasysocialApiResourceShare extends ApiResource
 	 * @param   string  $log_usr  user id
 	 * @param   string  $type     type
 	 *
-	 * @return string
+	 * @return mixed
 	 *
 	 * @since 1.0
 	 */
@@ -366,9 +363,6 @@ class EasysocialApiResourceShare extends ApiResource
 	{
 		// Get current logged in user.
 		$my = ES::user($log_usr);
-
-		// Get user access
-		$access = ES::access($my->id, SOCIAL_TYPE_USER);
 
 		// Load up the photo library
 		$lib = ES::photo($log_usr, $type);
@@ -416,10 +410,7 @@ class EasysocialApiResourceShare extends ApiResource
 		$photo->beforeStore($file, $image);
 
 		// Try to store the photo.
-		$state = $photo->store();
-
-		// Load the photos model
-		$photosModel = ES::model('Photos');
+		$photo->store();
 
 		// Get the storage path for this photo
 		$storage = ES::call('Photos', 'getStoragePath', array($album->id, $photo->id));
@@ -472,13 +463,7 @@ class EasysocialApiResourceShare extends ApiResource
 	public function uploadFile()
 	{
 		$config = ES::config();
-		$limit  = $config->get($type . '.attachments.maxsize');
-
-		// Set uploader options
-		$options = array(
-			'name' => 'file',
-			'maxsize' => $limit . 'M'
-		);
+		$limit  = $config->get('.attachments.maxsize');
 
 		// Let's get the temporary uploader table.
 		$uploader = ES::table('Uploader');
@@ -486,6 +471,6 @@ class EasysocialApiResourceShare extends ApiResource
 
 		// Pass uploaded data to the uploader.
 		$uploader->bindFile($data);
-		$state = $uploader->store();
+		$uploader->store();
 	}
 }

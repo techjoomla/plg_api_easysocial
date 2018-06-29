@@ -60,7 +60,6 @@ class EasysocialApiResourceLeaderboard extends ApiResource
 	public function getLeaderboard()
 	{
 		$app = JFactory::getApplication();
-		$log_user = $this->plugin->get('user')->id;
 		$limitstart = $app->input->get('limitstart', 0, 'INT');
 		$limit = $app->input->get('limit', 10, 'INT');
 		$mapp = new EasySocialApiMappingHelper;

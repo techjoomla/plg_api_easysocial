@@ -75,6 +75,7 @@ class EasysocialApiResourceEvent extends ApiResource
 
 		if ($event_id)
 		{
+			$event = array();
 			$event[] = ES::event($event_id);
 			$res->result = $mapp->mapItem($event, 'event', $log_user);
 		}
@@ -93,14 +94,9 @@ class EasysocialApiResourceEvent extends ApiResource
 	{
 		$app = JFactory::getApplication();
 		$log_user = JFactory::getUser($this->plugin->get('user')->id);
-		$user = ES::user($log_user->id);
-		$config	= ES::config();
 
 		// Create group post structure
-		$ev_data = array();
-		$result = new stdClass;
-		$valid = 1;
-		$mapp = new EasySocialApiMappingHelper;
+		$post = array();
 		$post['title']  = $app->input->post->get('title', null, 'STRING');
 		$post['parmalink']  = $app->input->post->get('parmalink', null, 'STRING');
 		$post['description']  = $app->input->post->get('description', null, 'STRING');
@@ -212,15 +208,10 @@ class EasysocialApiResourceEvent extends ApiResource
 		}
 
 		$data = $registry->toArray();
-		$args = array(&$data, &$stepSession);
-
-		// Load up the fields library so we can trigger the field apps
-		$fieldsLib = ES::fields();
-		$callback  = array($fieldsLib->getHandler(), 'validate');
 		$stepSession->values = $json->encode($data);
 
 		$stepSession->store();
-		$completed = $step->isFinalStep(SOCIAL_EVENT_VIEW_REGISTRATION);
+		$step->isFinalStep(SOCIAL_EVENT_VIEW_REGISTRATION);
 
 		$stepSession->created = ES::date()->toSql();
 		$stepSession->store();
@@ -289,8 +280,8 @@ class EasysocialApiResourceEvent extends ApiResource
 	 * Method createData
 	 *
 	 * @param   string  $field_ids  field id
-	 * @param   string  $post       post
-	 * @return string
+	 * @param   array  $post       post
+	 * @return  mixed
 	 *
 	 * @since 1.0
 	 */
@@ -300,7 +291,6 @@ class EasysocialApiResourceEvent extends ApiResource
 		$avtar_pth = '';
 		$avtar_scr = '';
 		$avtar_typ = '';
-		$phto_obj = null;
 		$avatar_file_name  = null;
 
 		if (!empty($_FILES['avatar']['name']))

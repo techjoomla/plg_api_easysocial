@@ -60,10 +60,8 @@ class EasysocialApiResourcePollsOne extends ApiResource
 		$app = JFactory::getApplication();
 		$log_user = JFactory::getUser($this->plugin->get('user')->id);
 		$filterType = $app->input->get('type', 'hidden', 'STRING');
-		$isloadmore = $app->input->get('loadmore', '', '');
 		$limitstart = $app->input->get('limitstart', '0', '');
 		$context = SOCIAL_STREAM_CONTEXT_TYPE_ALL;
-		$my = FD::user();
 		$stream = FD::stream();
 		$activities = $stream->getActivityLogs(
 												array(
@@ -73,8 +71,6 @@ class EasysocialApiResourcePollsOne extends ApiResource
 														'limitstart' => $limitstart
 												)
 											);
-
-		$nextlimit = $stream->getActivityNextLimit();
 
 		return $activities;
 	}

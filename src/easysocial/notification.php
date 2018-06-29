@@ -28,11 +28,11 @@ require_once JPATH_SITE . '/plugins/api/easysocial/libraries/uploadHelper.php';
 class EasysocialApiResourceNotification extends ApiResource
 {
 	/**
-	 * Method description
+	 * Method   description
 	 *
-	 * @return  mixed
+	 * @return  string
 	 *
-	 * @since 1.0
+	 * @since   1.0
 	 */
 	public function get()
 	{
@@ -111,7 +111,7 @@ class EasysocialApiResourceNotification extends ApiResource
 
 		if (!$status)
 		{
-			$final = ES::friends($target, $user)->cancel();
+			ES::friends($target, $user)->cancel();
 			$res->result->status = 1;
 			$this->plugin->setResponse($res);
 		}
@@ -157,7 +157,7 @@ class EasysocialApiResourceNotification extends ApiResource
 		if (!$status)
 		{
 			// Final call to reject friend request.
-			$final = ES::friends($target, $user)->reject();
+			ES::friends($target, $user)->reject();
 		}
 		else
 		{
@@ -199,7 +199,7 @@ class EasysocialApiResourceNotification extends ApiResource
 
 		if (!$status)
 		{
-			$final = ES::friends($target, $user)->approve();
+			ES::friends($target, $user)->approve();
 		}
 		else
 		{

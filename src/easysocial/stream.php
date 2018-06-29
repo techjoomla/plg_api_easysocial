@@ -57,14 +57,11 @@ class EasysocialApiResourceStreams extends ApiResource
 		switch ($action)
 		{
 			case 'hide' 	:
-								return $res = $this->hide($target_id);
-								break;
+								return $this->hide($target_id);
 			case 'unhide' 	:
-								return $res = $this->unhide($target_id);
-								break;
+								return $this->unhide($target_id);
 			case 'delete' 	:
-								return $res = $this->delete($target_id);
-								break;
+								return $this->delete($target_id);
 		}
 	}
 
@@ -142,7 +139,7 @@ class EasysocialApiResourceStreams extends ApiResource
 
 		// Get logged in user
 		$my = FD::user();
-		$access = $my->getAccess();
+		$my->getAccess();
 
 		// Load the stream item.
 		$item = FD::table('Stream');

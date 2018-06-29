@@ -509,13 +509,12 @@ class EasysocialApiResourceGroup extends ApiResource
 	 *
 	 * @param   Object  $user    SocialUser Object
 	 * @param   Object  $group   SocialGroup Object
-	 * @param   array   $config  config object
 	 *
 	 * @return  boolean
 	 *
 	 * @since 1.0
 	 */
-	public function addTostream($user, $group, $config)
+	public function addTostream($user, $group)
 	{
 		// Add activity logging when a user creates a new group.
 		$stream = ES::stream();
@@ -548,8 +547,8 @@ class EasysocialApiResourceGroup extends ApiResource
 	/**
 	 * create field array as per easysocial format for storing custom field data
 	 *
-	 * @param   Object  $postValues    The group post data
-	 * @param   Object  $fieldsOption  The options required to get field data
+	 * @param   array  $postValues    The group post data
+	 * @param   array  $fieldsOption  The options required to get field data
 	 *
 	 * @return  mixed
 	 *

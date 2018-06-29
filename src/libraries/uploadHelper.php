@@ -37,7 +37,7 @@ class EasySocialApiUploadHelper extends JObject
 	 * @param   integer  $uid   array of data
 	 * @param   string   $type  object type
 	 *
-	 * @return string
+	 * @return  stdClass
 	 *
 	 * @since 1.0
 	 */

@@ -34,7 +34,7 @@ class EasysocialApiResourceFollower extends ApiResource
 	 */
 	public function get()
 	{
-		return $this->getFollowers();
+		$this->getFollowers();
 	}
 
 	/**
@@ -46,7 +46,7 @@ class EasysocialApiResourceFollower extends ApiResource
 	 */
 	public function post()
 	{
-		return $this->follow();
+		$this->follow();
 	}
 
 	/**
@@ -63,7 +63,6 @@ class EasysocialApiResourceFollower extends ApiResource
 		$type = $app->input->get('type', 'user', 'STRING');
 		$group = $app->input->get('group', SOCIAL_APPS_GROUP_USER, 'word');
 		$log_user = $this->plugin->get('user')->id;
-		$follow = $app->input->get('follow', 1, 'INT');
 		$target = FD::user($target_user);
 		$res = new stdClass;
 
@@ -91,7 +90,6 @@ class EasysocialApiResourceFollower extends ApiResource
 		$subscription->uid = $target_user;
 		$subscription->type = $type . '.' . $group;
 		$subscription->user_id = $log_user;
-		$points = FD::points();
 
 		if (!$isFollowing)
 		{
@@ -104,14 +102,14 @@ class EasysocialApiResourceFollower extends ApiResource
 				$res->result->status = 1;
 				$res->result->message = JText::_('PLG_API_EASYSOCIAL_FOLLOWING_MESSAGE') . $target->username;
 
-				return $this->plugin->setResponse($res);
+				$this->plugin->setResponse($res);
 			}
 			else
 			{
 				$res->result->status = 0;
 				$res->result->message = JText::_('PLG_API_EASYSOCIAL_UNABLE_TO_FOLLOW_MESSAGE') . $target->username;
 
-				return $this->plugin->setResponse($res);
+				$this->plugin->setResponse($res);
 			}
 		}
 		else
@@ -135,14 +133,14 @@ class EasysocialApiResourceFollower extends ApiResource
 				$res->result->status = 1;
 				$res->result->message = JText::_('PLG_API_EASYSOCIAL_SUCCESSFULLY_UNFOLLW_MESSAGE') . $target->username;
 
-				return $this->plugin->setResponse($res);
+				$this->plugin->setResponse($res);
 			}
 			else
 			{
 				$res->result->status = 0;
 				$res->result->message = JText::_('PLG_API_EASYSOCIAL_UNABLE_TO_UNFOLLW_MESSAGE') . $target->username;
 
-				return $this->plugin->setResponse($res);
+				$this->plugin->setResponse($res);
 			}
 		}
 	}
@@ -253,7 +251,7 @@ class EasysocialApiResourceFollower extends ApiResource
 			$res->message = JText::_('PLG_API_EASYSOCIAL_UNABLE_TO_REMOVE_USER_MESSAGE');
 		}
 
-		return $this->plugin->setResponse($res);
+		$this->plugin->setResponse($res);
 	}
 
 	/**
@@ -281,7 +279,6 @@ class EasysocialApiResourceFollower extends ApiResource
 
 		// Load friends model.
 		$foll_model = FD::model('Followers');
-		$frnd_mod = FD::model('Friends');
 
 		// Set limitstart
 		$foll_model->setUserState('limitstart', $options['limitstart']);
@@ -312,21 +309,11 @@ class EasysocialApiResourceFollower extends ApiResource
 		if (count($fllowers_list) < 1)
 		{
 			$res->empty_message = JText::_('COM_EASYSOCIAL_NO_FOLLOWERS_YET');
-
-			$this->plugin->setResponse($res);
+			return $this->plugin->setResponse($res);
 		}
-
-		/**
-		 * Get other data
-		foreach($fllowers_list as $ky=>$lval)
-		{
-			$lval->mutual = $frnd_mod->getMutualFriendCount($user,$lval->id);
-			$lval->isFriend = $frnd_mod->isFriends($users,$lval->id);
-		}
-		*/
 
 		$res->result = $fllowers_list;
 
-		return $this->plugin->setResponse($res);
+		$this->plugin->setResponse($res);
 	}
 }

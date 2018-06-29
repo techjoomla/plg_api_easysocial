@@ -46,7 +46,7 @@ class EasysocialApiResourceVotes extends ApiResource
 	/**
 	 * Function for retrieve poll details
 	 *
-	 * @return  JSON
+	 * @return  array
 	 */
 	private function getPollData()
 	{
@@ -57,7 +57,6 @@ class EasysocialApiResourceVotes extends ApiResource
 		$poll->load(array('uid' => $poll_id));
 		$content = $mapp->createPollData($poll->id);
 		$result = get_object_vars($content);
-		$poll = array();
 
 		return $result;
 	}

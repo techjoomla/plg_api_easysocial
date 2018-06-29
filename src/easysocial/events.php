@@ -61,18 +61,12 @@ class EasysocialApiResourceEvents extends ApiResource
 		// Getting log_user
 		$log_user = $this->plugin->get('user')->id;
 		$ordering = $this->plugin->get('ordering', 'start', 'STRING');
-		$options = array();
-		$eventResult = array();
 
 		// Response object
 		$res = new stdclass;
 
 		// $res->result = array();
 		$res->empty_message = '';
-
-		$options = array(
-			'state' => SOCIAL_STATE_PUBLISHED, 'ordering' => $ordering
-		);
 		$event = ES::model('events');
 		$filter = $app->input->get('filter', 'all', 'STRING');
 		$dates = $app->input->get('date', '', 'STRING');
@@ -213,6 +207,7 @@ class EasysocialApiResourceEvents extends ApiResource
 			$options['limit'] = $limit;
 		}
 
+		$eventResult = array();
 		$eventResult = $event->getEvents($options);
 
 		// $eventResult = array_slice($eventResult, $limitstart, $limit);
@@ -232,11 +227,11 @@ class EasysocialApiResourceEvents extends ApiResource
 	/**
 	 * Method this common function is for getting dates for month,year,today,tomorrow filters.
 	 *
-	 * @param   string  $dates  date
+	 * @param  string  $dates  date
 	 *
-	 * @return string
+	 * @return array
 	 *
-	 * @since 1.0
+	 * @since  1.0
 	 */
 	private function dFilter($dates)
 	{
@@ -270,6 +265,7 @@ class EasysocialApiResourceEvents extends ApiResource
 				break;
 		}
 
+		$options = array();
 		$options['start-after'] = $start . ' 00:00:00';
 		$options['start-before'] = $end . ' 23:59:59';
 
