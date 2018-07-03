@@ -77,6 +77,7 @@ class EasysocialApiResourceShare extends ApiResource
 		// Specific user id for sharing
 		$customPrivacy = $app->input->get('privacyCustom', '', 'string');
 
+		$videos_type = $app->input->get('videos_type', '', 'STRING');
 		$link = $app->input->get('link', '', 'STRING');
 
 		if ($link)
@@ -271,18 +272,11 @@ class EasysocialApiResourceShare extends ApiResource
 
 			$contextIds = 0;
 
-			switch ($type)
+			if ($type == 'photos')
 			{
-				case 'photos':
-					$photo_obj = $this->uploadPhoto($log_usr, 'user');
-					$photo_ids[] = $photo_obj->id;
-					$photo_ids = array();
-					$contextIds = (count($photo_ids)) ? $photo_ids : null;
-				break;
-				case 'videos':
-				case 'polls':
-				case 'story':
-					break;
+				$photo_obj   = $this->uploadPhoto($log_usr, 'user');
+				$photo_ids[] = $photo_obj->id;
+				$contextIds  = (count($photo_ids)) ? $photo_ids : null;
 			}
 
 			// Options that should be sent to the stream lib
@@ -308,6 +302,11 @@ class EasysocialApiResourceShare extends ApiResource
 			// Create the stream item
 			$stream = $story->create($args);
 
+			if ($type == 'videos' && $videos_type == 'upload')
+			{
+				$this->uploadFile($stream->context_id);
+			}
+
 			// Privacy is only applicable to normal postings
 			if (!$isCluster)
 			{
@@ -321,6 +320,10 @@ class EasysocialApiResourceShare extends ApiResource
 					{
 						$privacyLib->add($privacyRule, $photoId, $type, $privacy, null, $customPrivacy);
 					}
+				}
+				elseif ($type == 'videos' && $videos_type == 'upload')
+				{
+					$privacyLib->add($privacyRule, $stream->context_id, $type, $privacy, null, $customPrivacy, $fieldPrivacy);
 				}
 				else
 				{
@@ -456,21 +459,58 @@ class EasysocialApiResourceShare extends ApiResource
 	/**
 	 * Method Function for upload file
 	 *
+	 * @param   Object  $context_id  stream id
+	 * 
 	 * @return  mixed
 	 *
 	 * @since 1.0
 	 */
-	public function uploadFile()
+	public function uploadFile($context_id)
 	{
-		$config = ES::config();
-		$limit  = $config->get('.attachments.maxsize');
+			$app = JFactory::getApplication();
+			$logUser = $this->plugin->get('user')->id;
+			$file = $app->input->files->get('video');
+			$data = array();
+			$data = $app->input->post->getArray();
 
-		// Let's get the temporary uploader table.
-		$uploader = ES::table('Uploader');
-		$uploader->user_id = $this->plugin->get('user')->id;
+			$filename = $file['name'];
+			$ext = pathinfo($filename, PATHINFO_EXTENSION);
 
-		// Pass uploaded data to the uploader.
-		$uploader->bindFile($data);
-		$uploader->store();
+			// Format the title since the title is the file name
+			$data['title'] = empty($data['videos_title']) ? basename($filename, "." . $ext) : $data['videos_title'];
+			$data['description'] = $data['videos_description'];
+
+			$data['source'] = 'upload';
+
+			// Get a default category to house the video
+			$model = ES::model('Videos');
+			$category = $model->getDefaultCategory();
+			$data['videos_category'] = empty($data['videos_category']) ? $category->id : $data['videos_category'];
+			$res = new stdClass;
+
+			$data['category_id'] = $data['videos_category'];
+			$data['uid'] = $app->input->get('target', $app->my->id, 'int');
+
+			// Get the uid and type
+			$uid = $app->input->get('target', $app->my->id, 'int');
+			$data['type'] = $app->input->get('clusterType', 'user', 'STRING');
+
+			$table = ES::table('Video');
+			$table->load($context_id);
+
+			$video = ES::video($uid, $type, $table);
+			$state = $video->save($data, $file);
+
+		if ($state)
+			{
+				$video->process();
+				$video->table->state = SOCIAL_VIDEO_PUBLISHED;
+				$video->table->store();
+				$res->result->message = JText::_('PLG_API_EASYSOCIAL_VIDEO_LNK_UPLOAD_SUCCESS');
+		}
+		else
+		{
+				ApiError::raiseError(400, JText::_('PLG_API_EASYSOCIAL_VIDEO_UNABLE_UPLOAD'));
+		}
 	}
 }

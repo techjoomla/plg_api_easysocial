@@ -51,13 +51,10 @@ class EasySocialApiMappingHelper
 	/**
 	 * Method map
 	 *
-	 * @param   array   $rows         array of data
-	 * @param   string  $obj_type     object type
-	 * @param   int     $userid       user id
-	 * @param   string  $type         type
-	 * @param   string  $strip_tags   strip tags
-	 * @param   int     $text_length  text length
-	 * @param   string  $skip         skip
+	 * @param   array   $rows      array of data
+	 * @param   string  $obj_type  object type
+	 * @param   int     $userid    user id
+	 * @param   string  $type      type
 	 *
 	 * @return  void|object|array
 	 *
@@ -72,8 +69,10 @@ class EasySocialApiMappingHelper
 		{
 			case 'category':
 				return $this->categorySchema($rows);
+				break;
 			case 'group':
 				return $this->groupSchema($rows, $userid);
+				break;
 			case 'page':
 				return $this->pageSchema($rows, $userid);
 				break;
@@ -85,6 +84,9 @@ class EasySocialApiMappingHelper
 				break;
 			case 'user':
 				return $this->userSchema($rows);
+				break;
+			case 'comment':
+				return $this->commentSchema($rows);
 				break;
 			case 'message':
 				return $this->messageSchema($rows);
@@ -117,14 +119,13 @@ class EasySocialApiMappingHelper
 				return $this->pollsSchema($rows);
 				break;
 		}
-
 	}
 
 	/**
 	 * Method To build photo object
 	 *
 	 * @param   array  $rows    array of data
-	 * @param   int     $userid  user id
+	 * @param   int    $userid  user id
 	 *
 	 * @return array
 	 *
@@ -179,7 +180,7 @@ class EasySocialApiMappingHelper
 	 * To build ablum object
 	 *
 	 * @param   array  $rows    array of data
-	 * @param   int     $userid  user id
+	 * @param   int    $userid  user id
 	 *
 	 * @return array
 	 *
@@ -284,10 +285,13 @@ class EasySocialApiMappingHelper
 
 				$element = 'field.' . strtolower($fobj->unique_key);
 
-				if ($fobj->field_name == 'Date of birth') {
+				if ($fobj->field_name == 'Date of birth')
+				{
 					$element = 'field.' . 'birthday.year';
 					$elemmentType = 'birthday.year';
-				} else {
+				}
+				else
+				{
 					$elemmentType = SOCIAL_TYPE_FIELD;
 				}
 
@@ -298,21 +302,21 @@ class EasySocialApiMappingHelper
 					continue;
 				}
 
-				if ($fobj->field_name == 'Name')
+				if ($fobj->unique_key == 'JOOMLA_FULLNAME')
 				{
 					$fobj->field_value = $user->name;
 				}
 
-				if ($fobj->field_name == 'Gender' && $fobj->field_value != null)
+				if ($fobj->unique_key == 'GENDER' && $fobj->field_value != null)
 				{
 					$gender = $user->getFieldValue('GENDER');
 
 					// $fobj->field_value = $gender->data;
-					$fobj->field_value = ($gender->data == 1) ? 'male' : 'female';
+					$fobj->field_value = ($gender->data == 1) ? JText::_('PLG_API_EASYSOCIAL_MALE') : JText::_('PLG_API_EASYSOCIAL_FEMALE');
 				}
 
 				// Rework on this work
-				if ($fobj->field_name == 'Birthday' && $fobj->field_value != null)
+				if ($fobj->unique_key == 'BIRTHDAY' && $fobj->field_value != null)
 				{
 					$birthday = $user->getFieldValue('BIRTHDAY');
 
@@ -337,7 +341,7 @@ class EasySocialApiMappingHelper
 					$fobj->field_value = '<a href="' . $fobj->field_value . '">' . $fobj->field_value . '</a>';
 				}
 
-				if ($fobj->field_name == 'Mobile Number' && strlen($fobj->field_value) > 10)
+				if ( $fobj->unique_key == 'TEXTBOX' && strlen($fobj->field_value) > 10)
 				{
 					$fobj->field_value = '<a href="tel:' . $fobj->field_value . '">' . $fobj->field_value . '</a>';
 				}
@@ -531,9 +535,13 @@ class EasySocialApiMappingHelper
 				{
 					$table = ES::table('Video');
 					$table->load($item->element_id);
+					$storage = FD::storage('amazon');
+					$uri = $storage->getPermalink(false);
 					$video = ES::video($table->uid, $table->type, $table);
-					$item->thumbnail = JURI::root() . $video->thumbnail;
-					$item->preview = '<video width="320" height="240" controls poster="' . $item->thumbnail . '"><source src="' . $item->source . ' " type="video/mp4"></video>';
+					$fst 				= JFile::exists($video->thumbnail);
+					$item->thumbnail	= ($fst) ? JURI::root() . $video->thumbnail : $uri . $video->thumbnail;
+					$item->preview = '<video class="video-container" controls poster="' . $item->thumbnail . '">
+					<source src="' . $item->source . '" type="video/mp4"></video>';
 				}
 
 				// Set the stream content
@@ -675,8 +683,8 @@ class EasySocialApiMappingHelper
 	/**
 	 * Create like object
 	 *
-	 * @param   array|oblect   $row     array of data
-	 * @param   int            $userid  user id
+	 * @param   array|oblect  $row     array of data
+	 * @param   int           $userid  user id
 	 *
 	 * @return array
 	 *
@@ -1023,7 +1031,7 @@ class EasySocialApiMappingHelper
 	 * to build event obj.
 	 *
 	 * @param   array  $rows    array of data
-	 * @param   int     $userid  user id
+	 * @param   int    $userid  user id
 	 *
 	 * @return array
 	 *
@@ -1239,8 +1247,7 @@ class EasySocialApiMappingHelper
 
 						if ($fobj->unique_key == 'DESCRIPTION')
 						{
-							$fobj->field_value = preg_replace("~[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]~",
-							"<a href=\"\\0\">\\0</a>", $fobj->field_value);
+							$fobj->field_value = preg_replace("~[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]~", "<a href=\"\\0\">\\0</a>", $fobj->field_value);
 						}
 
 						array_push($fieldsArray, $fobj);
@@ -1335,13 +1342,6 @@ class EasySocialApiMappingHelper
 
 		$result = array();
 
-		/*
-		 * $user   = FD::user($userid);
-
-		// Easysocial default profile
-		$profile = $user->getProfile();
-		*/
-
 		// $fmod_obj = new EasySocialModelFields;
 		$page_model = FD::model('Pages');
 
@@ -1376,8 +1376,7 @@ class EasySocialApiMappingHelper
 
 						if ($fobj->unique_key == 'DESCRIPTION')
 						{
-							$fobj->field_value = preg_replace("~[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]~",
-							"<a href=\"\\0\">\\0</a>", $fobj->field_value);
+							$fobj->field_value = preg_replace("~[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]~", "<a href=\"\\0\">\\0</a>", $fobj->field_value);
 						}
 
 						array_push($fieldsArray, $fobj);
@@ -1459,8 +1458,8 @@ class EasySocialApiMappingHelper
 	/**
 	 * function for create profile schema
 	 *
-	 * @param   array   $other_user_id  other user id
-	 * @param   int     $userid         user id
+	 * @param   array  $other_user_id  other user id
+	 * @param   int    $userid         user id
 	 *
 	 * @return array
 	 *
@@ -1552,7 +1551,7 @@ class EasySocialApiMappingHelper
 	 * function for create message schema
 	 *
 	 * @param   array  $rows      array of data
-	 * @param   int     $log_user  user object
+	 * @param   int    $log_user  user object
 	 *
 	 * @return array
 	 *
@@ -1873,7 +1872,7 @@ class EasySocialApiMappingHelper
 		$user = JFactory::getUser();
 		$isRoot = $user->authorise('core.admin');
 		$storage = FD::storage('amazon');
-		$uri = $storage->getPermalink();
+		$uri = $storage->getPermalink(false);
 
 		foreach ($rows as $ky => $row)
 		{
@@ -1914,12 +1913,31 @@ class EasySocialApiMappingHelper
 			$fst = JFile::exists($row->thumbnail);
 			$item->thumbnail = ($fst) ? JURI::root() . $row->thumbnail : $uri . $row->thumbnail;
 
-			$item->likes = $video->getLikesCount();
-			$item->comments = $video->getCommentsCount();
-			$video_id = explode("?v=", $item->path);
-			$video_id = explode("&", $video_id[1]);
-			$item->video_url = 'https://www.youtube.com/embed/' . $video_id[0] . '?feature=oembed';
-			$item->isSiteAdmin = $isRoot ? true : false;
+			$item->likes		= $video->getLikesCount();
+			$item->comments		= $video->getCommentsCount();
+			$video_id			= explode("?v=", $item->path);
+			$video_id			= explode("&", $video_id[1]);
+
+			// $item->video_url	= 'https://www.youtube.com/embed/' . $video_id[0] . '?feature=oembed';
+			if ($item->params['oembed']['provider_name'])
+			{
+				$videoTemp = $item->params['oembed']['html'];
+
+				$dom = new DOMDocument;
+					$dom->loadHTML($videoTemp);
+
+					foreach ($dom->getElementsByTagName('iframe') as $node)
+					{
+						$item->video_url = $node->getAttribute('src');
+					}
+			}
+
+			if (!$item->video_url)
+			{
+				$item->video_url = 'https://www.youtube.com/embed/' . $video_id[0] . '?feature=oembed';
+			}
+
+			$item->isSiteAdmin	= $isRoot ? true : false;
 
 			// $item->isAdmin = false;
 			if (($userid == $row->user_id) || $isRoot)
@@ -2010,7 +2028,9 @@ class EasySocialApiMappingHelper
 		$item->cover_image = $cluster->getSource();
 		$item->cover  = $item->cover_image;
 
-		$storage = FD::storage('amazon');
+		$storage			= FD::storage('amazon');
+		$config				= FD::config();
+		$storageContainer	= ES::cleanPath($config->get('avatars.storage.container'));
 
 		// Getting all event images
 		if ($row->id)
@@ -2019,12 +2039,12 @@ class EasySocialApiMappingHelper
 			{
 				$avt_key = 'avatar_' . $ky;
 
-				$fst = JFile::exists('media/com_easysocial/avatars/' . $cluster->type . '/' . $row->id . '/' . $avt);
+				$fst = JFile::exists($storageContainer . '/' . $cluster->type . '/' . $row->id . '/' . $avt);
 
 				// Set default image
 				if (!$fst)
 				{
-					$imagePath = 'media/com_easysocial/avatars/' . $cluster->type . '/' . $row->id . '/' . $avt;
+					$imagePath = $storageContainer . '/' . $cluster->type . '/' . $row->id . '/' . $avt;
 					$uri = $storage->getPermalink($imagePath);
 					$connector = ES::connector();
 					$connector->addUrl($uri);
@@ -2045,7 +2065,7 @@ class EasySocialApiMappingHelper
 				}
 				else
 				{
-					$item->$avt_key = JURI::root() . 'media/com_easysocial/avatars/' . $cluster->type . '/' . $row->id . '/' . $avt;
+					$item->$avt_key = JURI::root() . $storageContainer . '/' . $cluster->type . '/' . $row->id . '/' . $avt;
 				}
 			}
 		}
