@@ -169,7 +169,7 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_SELECT'));
 		}
 
-		$uid = $input->get('uid', $log_user, 'INT') ? $postData['uid'] : $logUser;
+		$uid = $input->get('uid', 0, 'INT') ? $postData['uid'] : $logUser;
 		$type = $input->get('type', SOCIAL_TYPE_USER, 'STRING');
 
 		$video = ES::video($uid, $type);
