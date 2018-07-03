@@ -34,6 +34,7 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 	public function post()
 	{
 		$input = JFactory::getApplication()->input;
+		$post = array();
 		$post['source'] = $input->get('source', 'link', 'STRING');
 		$logUser = $this->plugin->get('user')->id;
 
@@ -79,7 +80,6 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 	{
 		$input = JFactory::getApplication()->input;
 		$postData = $input->post->getArray();
-		$logUser = $this->plugin->get('user')->id;
 		$postData['link'] = $input->get('path', '', 'STRING');
 
 		$video = ES::video();
@@ -99,7 +99,6 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 			(?:youtube\.com|youtu\.be|vimeo\.com)  # Mandatory domain name
 			/watch\?v=([^&]+)           # URI with video id as capture group 1
 			~x';
-			$has_match = preg_match($rx, $postData['link'], $matches);
 		}
 
 		$isNew = $video->isNew();
@@ -131,18 +130,18 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 
 			// Save the video
 			$state = $video->save($postData, $video);
-		}
 
-		if ($state)
-		{
-			$video->table->store();
-			$video->table->hit();
-			$this->createVideoStream($postData, $video);
-			$res->result->message = JText::_('PLG_API_EASYSOCIAL_VIDEO_LNK_UPLOAD_SUCCESS');
-		}
-		else
-		{
-			ApiError::raiseError(400, JText::_('PLG_API_EASYSOCIAL_VIDEO_UNABLE_UPLOAD'));
+			if ($state)
+			{
+				$video->table->store();
+				$video->table->hit();
+				$this->createVideoStream($postData, $video);
+				$res->result->message = JText::_('PLG_API_EASYSOCIAL_VIDEO_LNK_UPLOAD_SUCCESS');
+			}
+			else
+			{
+				ApiError::raiseError(400, JText::_('PLG_API_EASYSOCIAL_VIDEO_UNABLE_UPLOAD'));
+			}
 		}
 
 		$this->plugin->setResponse($res);
@@ -170,7 +169,7 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_SELECT'));
 		}
 
-		$uid = $input->get('uid', $log_user, 'INT') ? $postData['uid'] : $log_user;
+		$uid = $input->get('uid', $log_user, 'INT') ? $postData['uid'] : $logUser;
 		$type = $input->get('type', SOCIAL_TYPE_USER, 'STRING');
 
 		$video = ES::video($uid, $type);
