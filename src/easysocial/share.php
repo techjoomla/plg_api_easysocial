@@ -78,7 +78,7 @@ class EasysocialApiResourceShare extends ApiResource
 		// Specific user id for sharing
 		$customPrivacy = $app->input->get('privacyCustom', '', 'string');
 
-		$videos_type = $app->input->get('videos_type', '', 'STRING');
+		$videosType = $app->input->get('videos_type', '', 'STRING');
 		$link = $app->input->get('link', '', 'STRING');
 
 		if ($link)
@@ -304,9 +304,9 @@ class EasysocialApiResourceShare extends ApiResource
 			// Create the stream item
 			$stream = $story->create($args);
 
-			if ($type == 'videos' && $videos_type == 'upload')
+			if ($type == 'videos' && $videosType == 'upload')
 			{
-				$this->uploadFile($stream->context_id);
+				$this->uploadVideo($stream->context_id);
 			}
 
 			// Privacy is only applicable to normal postings
@@ -323,7 +323,7 @@ class EasysocialApiResourceShare extends ApiResource
 						$privacyLib->add($privacyRule, $photoId, $type, $privacy, null, $customPrivacy);
 					}
 				}
-				elseif ($type == 'videos' && $videos_type == 'upload')
+				elseif ($type == 'videos' && $videosType == 'upload')
 				{
 					$privacyLib->add($privacyRule, $stream->context_id, $type, $privacy, null, $customPrivacy, $fieldPrivacy);
 				}
@@ -459,25 +459,25 @@ class EasysocialApiResourceShare extends ApiResource
 	}
 
 	/**
-	 * Method Function for upload file
+	 * Method Function for upload video
 	 *
-	 * @param   Object  $context_id  stream id
+	 * @param   Object  $contextId  stream table id
 	 * 
 	 * @return  mixed
 	 *
 	 * @since 1.0
 	 */
-	public function uploadFile($context_id)
+	public function uploadVideo($contextId)
 	{
 		$app = JFactory::getApplication();
 		$file = $app->input->files->get('video');
 		$data = $app->input->post->getArray();
 
-		$filename = $file['name'];
-		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		$fileName = JFile::getName($file['name']);
+		$ext = JFile::getExt($file['name']);
 
 		// Format the title since the title is the file name
-		$data['title'] = empty($data['videos_title']) ? basename($filename, "." . $ext) : $data['videos_title'];
+		$data['title'] = empty($data['videos_title']) ? basename($fileName, "." . $ext) : $data['videos_title'];
 		$data['description'] = $data['videos_description'];
 
 		$data['source'] = 'upload';
@@ -496,7 +496,7 @@ class EasysocialApiResourceShare extends ApiResource
 		$data['type'] = $app->input->get('clusterType', 'user', 'STRING');
 
 		$table = ES::table('Video');
-		$table->load($context_id);
+		$table->load($contextId);
 
 		$video = ES::video($uid, $data['type'], $table);
 		$state = $video->save($data, $file);
