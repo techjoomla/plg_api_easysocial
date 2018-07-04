@@ -10,7 +10,7 @@
  * and the com_api extension by Brian Edgerton (http://www.edgewebworks.com)
  */
 
-defined('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die( 'Restricted access' );
 
 jimport('joomla.plugin.plugin');
 jimport('joomla.html.html');
@@ -28,35 +28,21 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 {
 	/**
 	 * Function for retrieve post video
-	 *
-	 * @return  mixed
+	 * 	 
+	 * @return  JSON
 	 */
 	public function post()
 	{
-		$this->saveVideo();
-	}
-
-	/**
-	 * Function for retrieve save video
-	 * 	 
-	 * @return  JSON	 
-	 */
-	private function saveVideo()
-	{
-		$app = JFactory::getApplication();
-		$log_user = $this->plugin->get('user')->id;
+		$input = JFactory::getApplication()->input;
 		$post = array();
-		$post['category_id']	=	$app->input->get('category_id', 0, 'INT');
-		$post['uid']			=	$app->input->get('uid', $log_user, 'INT');
-		$post['title']			=	$app->input->get('title', '', 'STRING');
-		$post['description']	=	$app->input->get('description', '', 'STRING');
-		$post['link']			=	$app->input->get('path', '', 'STRING');
-		$post['location']		=	$app->input->get('location', '', 'STRING');
-		$post['privacy']		=	$app->input->get('privacy', '', 'STRING');
-		$post['type']			=	$app->input->get('type', '', 'STRING');
+		$post['source'] = $input->get('source', 'link', 'STRING');
+		$logUser = $this->plugin->get('user')->id;
 
-		$video = ES::video();
-		$res = new stdClass;
+		// Check title
+		if ($post['title'])
+		{
+			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_TITLE'));
+		}
 
 		// Determine if this user has the permissions to create video.
 		$access 	= ES::access();
@@ -67,7 +53,7 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_NOT_ALLOW_MESSAGE'));
 		}
 
-		$canCreate = ES::user($log_user);
+		$canCreate = ES::user($logUser);
 		$total = $canCreate->getTotalVideos($post);
 
 		if ($access->exceeded('videos.total', $total) || $access->exceeded('videos.daily', $total))
@@ -75,7 +61,37 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_CREATE_EXCEEDED_LIMIT'));
 		}
 
-		if ($post['link'])
+		if ($post['source'] == 'link')
+		{
+			$this->linkVideo();
+		}
+		else
+		{
+			$this->uploadVideo();
+		}
+	}
+
+	/**	  
+	 * Function for retrieve save video
+	 * 	 
+	 * @return  JSON	 
+	 */
+	private function linkVideo()
+	{
+		$input = JFactory::getApplication()->input;
+		$postData = $input->post->getArray();
+		$postData['link'] = $input->get('path', '', 'STRING');
+
+		$video = ES::video();
+		$res = new stdClass;
+
+		// Check link
+		if (empty($postData['link']))
+		{
+			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_LNK_INVALID_URL'));
+		}
+
+		if ($postData['link'])
 		{
 			$rx = '~
 			^(?:https?://)?              # Optional protocol
@@ -97,7 +113,7 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 		// Video links
 		if ($video->table->isLink())
 		{
-			$video->table->path = $post['link'];
+			$video->table->path = $postData['link'];
 
 			// Grab the video data
 			$crawler = ES::crawler();
@@ -111,12 +127,88 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 			// Set the video's duration
 			$video->table->duration = @$scrape->oembed->duration;
 			$video->processLinkVideo();
-			$video->save($post);
-			$video->table->hit();
+
+			// Save the video
+			$state = $video->save($postData, $video);
+
+			if ($state)
+			{
+				$video->table->store();
+				$video->table->hit();
+				$this->createVideoStream($postData, $video);
+				$res->result->message = JText::_('PLG_API_EASYSOCIAL_VIDEO_LNK_UPLOAD_SUCCESS');
+			}
+			else
+			{
+				ApiError::raiseError(400, JText::_('PLG_API_EASYSOCIAL_VIDEO_UNABLE_UPLOAD'));
+			}
 		}
 
-		// Save the video
-		$video->table->store();
+		$this->plugin->setResponse($res);
+	}
+
+	/**	  
+	 * Function for retrieve save video
+	 * 	 
+	 * @return  JSON	 
+	 */
+	private function uploadVideo()
+	{
+		$input = JFactory::getApplication()->input;
+		$logUser = $this->plugin->get('user')->id;
+
+		$postData = $input->post->getArray();
+		$postData['uid'] = $input->get('uid', $logUser, 'INT');
+
+		$res = new stdClass;
+
+		$file = $input->files->get('video');
+
+		if (empty($file))
+		{
+			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_VIDEO_SELECT'));
+		}
+
+		$uid = $input->get('uid', 0, 'INT') ? $postData['uid'] : $logUser;
+		$type = $input->get('type', SOCIAL_TYPE_USER, 'STRING');
+
+		$video = ES::video($uid, $type);
+		$isNew = $video->isNew();
+
+		if ($isNew)
+		{
+			$video->table->user_id = $video->my->id;
+		}
+
+		$state = $video->save($postData, $file);
+
+		if ($state)
+		{
+			$video->process();
+			$video->table->state = SOCIAL_VIDEO_PUBLISHED;
+			$video->table->store();
+			$this->createVideoStream($postData, $video);
+			$res->result->message = JText::_('PLG_API_EASYSOCIAL_VIDEO_LNK_UPLOAD_SUCCESS');
+		}
+		else
+		{
+			ApiError::raiseError(400, JText::_('PLG_API_EASYSOCIAL_VIDEO_UNABLE_UPLOAD'));
+		}
+
+		$this->plugin->setResponse($res);
+	}
+
+	/**
+	 * Function for post video on stream page
+	 * 
+	 * @param   Object  $post   The video post data
+	 * @param   Object  $video  The video data
+	 * 
+	 * @return  void
+	 */
+	private function createVideoStream($post, $video)
+	{
+		// Comman code for video upload and link display on stream page
 
 		// Bind the video location
 		if (isset($post['location']) && $post['location'] && isset($post['latitude']) && $post['latitude'] && isset($post['longitude'])
@@ -146,16 +238,6 @@ class EasysocialApiResourceVideos_Link extends ApiResource
 			$video->insertPrivacy($privacyData);
 		}
 
-		// Check if we should create stream or not.
-		$createStream = ($isNew) ? true : false;
-
-		if ($createStream)
-		{
-			$video->createStream('create', $privacyData);
-		}
-
-		$res->result->message = JText::_('COM_EASYSOCIAL_EMAILS_EVENT_NEW_VIDEO');
-
-		$this->plugin->setResponse($res);
+		$video->createStream('create', $privacyData);
 	}
 }
