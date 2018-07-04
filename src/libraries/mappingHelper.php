@@ -69,10 +69,8 @@ class EasySocialApiMappingHelper
 		{
 			case 'category':
 				return $this->categorySchema($rows);
-				break;
 			case 'group':
 				return $this->groupSchema($rows, $userid);
-				break;
 			case 'page':
 				return $this->pageSchema($rows, $userid);
 				break;
@@ -84,9 +82,6 @@ class EasySocialApiMappingHelper
 				break;
 			case 'user':
 				return $this->userSchema($rows);
-				break;
-			case 'comment':
-				return $this->commentSchema($rows);
 				break;
 			case 'message':
 				return $this->messageSchema($rows);

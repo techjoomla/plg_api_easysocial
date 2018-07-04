@@ -70,6 +70,7 @@ class EasysocialApiResourceShare extends ApiResource
 		$cluster = $app->input->get('cluster_id', null, 'INT');
 		$clusterType = $app->input->get('cluster_type', null, 'STRING');
 		$friends_tags = $app->input->get('friends_tags', null, 'ARRAY');
+		$fieldPrivacy = $app->input->get('privacyField', '', 'string');
 
 		// Set the privacy for the album Public,members,friends,only_me
 		$privacy = $app->input->get('privacy', 'public', 'STRING');
@@ -274,6 +275,7 @@ class EasysocialApiResourceShare extends ApiResource
 
 			if ($type == 'photos')
 			{
+				$photo_ids = array();
 				$photo_obj   = $this->uploadPhoto($log_usr, 'user');
 				$photo_ids[] = $photo_obj->id;
 				$contextIds  = (count($photo_ids)) ? $photo_ids : null;
@@ -467,46 +469,44 @@ class EasysocialApiResourceShare extends ApiResource
 	 */
 	public function uploadFile($context_id)
 	{
-			$app = JFactory::getApplication();
-			$logUser = $this->plugin->get('user')->id;
-			$file = $app->input->files->get('video');
-			$data = array();
-			$data = $app->input->post->getArray();
+		$app = JFactory::getApplication();
+		$file = $app->input->files->get('video');
+		$data = $app->input->post->getArray();
 
-			$filename = $file['name'];
-			$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		$filename = $file['name'];
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
 
-			// Format the title since the title is the file name
-			$data['title'] = empty($data['videos_title']) ? basename($filename, "." . $ext) : $data['videos_title'];
-			$data['description'] = $data['videos_description'];
+		// Format the title since the title is the file name
+		$data['title'] = empty($data['videos_title']) ? basename($filename, "." . $ext) : $data['videos_title'];
+		$data['description'] = $data['videos_description'];
 
-			$data['source'] = 'upload';
+		$data['source'] = 'upload';
 
-			// Get a default category to house the video
-			$model = ES::model('Videos');
-			$category = $model->getDefaultCategory();
-			$data['videos_category'] = empty($data['videos_category']) ? $category->id : $data['videos_category'];
-			$res = new stdClass;
+		// Get a default category to house the video
+		$model = ES::model('Videos');
+		$category = $model->getDefaultCategory();
+		$data['videos_category'] = empty($data['videos_category']) ? $category->id : $data['videos_category'];
+		$res = new stdClass;
 
-			$data['category_id'] = $data['videos_category'];
-			$data['uid'] = $app->input->get('target', $app->my->id, 'int');
+		$data['category_id'] = $data['videos_category'];
+		$data['uid'] = $app->input->get('target', $app->my->id, 'int');
 
-			// Get the uid and type
-			$uid = $app->input->get('target', $app->my->id, 'int');
-			$data['type'] = $app->input->get('clusterType', 'user', 'STRING');
+		// Get the uid and type
+		$uid = $app->input->get('target', $app->my->id, 'int');
+		$data['type'] = $app->input->get('clusterType', 'user', 'STRING');
 
-			$table = ES::table('Video');
-			$table->load($context_id);
+		$table = ES::table('Video');
+		$table->load($context_id);
 
-			$video = ES::video($uid, $type, $table);
-			$state = $video->save($data, $file);
+		$video = ES::video($uid, $data['type'], $table);
+		$state = $video->save($data, $file);
 
 		if ($state)
-			{
-				$video->process();
-				$video->table->state = SOCIAL_VIDEO_PUBLISHED;
-				$video->table->store();
-				$res->result->message = JText::_('PLG_API_EASYSOCIAL_VIDEO_LNK_UPLOAD_SUCCESS');
+		{
+			$video->process();
+			$video->table->state = SOCIAL_VIDEO_PUBLISHED;
+			$video->table->store();
+			$res->result->message = JText::_('PLG_API_EASYSOCIAL_VIDEO_LNK_UPLOAD_SUCCESS');
 		}
 		else
 		{
