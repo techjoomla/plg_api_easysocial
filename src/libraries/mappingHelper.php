@@ -535,8 +535,8 @@ class EasySocialApiMappingHelper
 					$video = ES::video($table->uid, $table->type, $table);
 					$fst 				= JFile::exists($video->thumbnail);
 					$item->thumbnail	= ($fst) ? JURI::root() . $video->thumbnail : $uri . $video->thumbnail;
-					$item->preview = '<video class="video-container" controls poster="' . $item->thumbnail . '">
-					<source src="' . $item->source . '" type="video/mp4"></video>';
+					$item->preview = '<div class="bground"><video class="video-container" controls poster="' . $item->thumbnail . '"><source src="'
+. $item->source . '" type="video/mp4"></video></div>';
 				}
 
 				// Set the stream content

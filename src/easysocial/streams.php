@@ -201,14 +201,14 @@ class EasysocialApiResourceStreams extends ApiResource
 			// Check if the stream item is for groups
 			if ($item->cluster_id)
 			{
-				if ($item->cluster_type == 'group')
+				switch ($item->cluster_type)
 				{
-					$cluster = ES::group($item->cluster_id);
-				}
-
-				if ($item->cluster_type == 'event')
-				{
-					$cluster = ES::event($item->cluster_id);
+					case 'group' : $cluster = ES::group($item->cluster_id);
+								break;
+					case 'event' : $cluster = ES::event($item->cluster_id);
+								break;
+					case 'page' : $cluster = ES::page($item->cluster_id);
+								break;
 				}
 
 				if (!$cluster->isAdmin() && !$access->allowed('stream.delete', false))
