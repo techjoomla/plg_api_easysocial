@@ -210,18 +210,18 @@ class EasysocialApiResourceSearch extends ApiResource
 		$result = new stdClass;
 
 		$db = JFactory::getDbo();
-		$query1 = $db->getQuery(true);
-		$query1->select($db->quoteName(array('cl.id')));
-		$query1->from($db->quoteName('#__social_clusters', 'cl'));
+		$query = $db->getQuery(true);
+		$query->select($db->quoteName(array('cl.id')));
+		$query->from($db->quoteName('#__social_clusters', 'cl'));
 
 		if (!empty($search))
 		{
-			$query1->where("(cl.title LIKE '%" . $search . "%' )");
+			$query->where("(cl.title LIKE '%" . $search . "%' )");
 		}
 
-		$query1->where('cl.state = 1');
-		$query1->order($db->quoteName('cl.id') . 'ASC');
-		$db->setQuery($query1);
+		$query->where('cl.state = 1');
+		$query->order($db->quoteName('cl.id') . 'ASC');
+		$db->setQuery($query);
 		$edata = $db->loadObjectList();
 		$event = array();
 
@@ -232,7 +232,7 @@ class EasysocialApiResourceSearch extends ApiResource
 
 		// Manual pagination
 		$event = array_slice($event, $limitstart, $limit);
-		$result->events = $mapp->mapItem($event, 'event', $log_user->id);
+		$result->events = $mapp->mapItem($event, 'event', $logUser->id);
 
 		$catModel = FD::model('eventcategories');
 		$result->categories = $catModel->getCategories();
