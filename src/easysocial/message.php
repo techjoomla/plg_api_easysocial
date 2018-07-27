@@ -126,14 +126,13 @@ class EasysocialApiResourceMessage extends ApiResource
 	 * Method createConversion
 	 *
 	 * @param   array   $recipients  array of receipients
-	 * @param   int     $log_usr     logged in user id
 	 * @param   string  $msg         message
 	 *
 	 * @return mixed
 	 *
 	 * @since 1.0
 	 */
-	private function createConversion($recipients, $log_usr, $msg)
+	private function createConversion($recipients, $msg)
 	{
 		$conversation = ES::conversation();
 		$allowed = $conversation->canCreate();
