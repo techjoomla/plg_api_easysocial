@@ -255,6 +255,7 @@ class EasysocialApiResourceSearch extends ApiResource
 	 */
 	public function getGroupList($log_user, $search, $limitstart, $limit)
 	{
+		/* Todo : Function depricated - Need to remove all search function and create one global function for all search type  */
 		$mapp = new EasySocialApiMappingHelper;
 
 		// $res = new stdClass;
