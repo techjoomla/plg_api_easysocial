@@ -126,14 +126,13 @@ class EasysocialApiResourceMessage extends ApiResource
 	 * Method createConversion
 	 *
 	 * @param   array   $recipients  array of receipients
-	 * @param   int     $log_usr     logged in user id
 	 * @param   string  $msg         message
 	 *
 	 * @return mixed
 	 *
 	 * @since 1.0
 	 */
-	private function createConversion($recipients, $log_usr, $msg)
+	private function createConversion($recipients, $msg)
 	{
 		$conversation = ES::conversation();
 		$allowed = $conversation->canCreate();
@@ -191,27 +190,29 @@ class EasysocialApiResourceMessage extends ApiResource
 	{
 		// Init variable
 		$app = JFactory::getApplication();
-		$log_user = JFactory::getUser($this->plugin->get('user')->id);
-		$conversation_id = $app->input->get('conversation_id', 0, 'INT');
+		$logUser = JFactory::getUser($this->plugin->get('user')->id);
+		$conversationId = $app->input->get('conversation_id', 0, 'INT');
 		$limitstart = $app->input->get('limitstart', 0, 'INT');
-		$limit = $app->input->get('limit', 500, 'INT');
+		$limit = $app->input->get('limit', 50, 'INT');
 		$maxlimit = $app->input->get('maxlimit', 100, 'INT');
 		$filter = $app->input->get('filter', null, 'STRING');
 		$mapp = new EasySocialApiMappingHelper;
 		$res = new stdclass;
 		$res->result = array();
 		$res->empty_message = '';
-		$conv_model = ES::model('Conversations');
+		$convModel = ES::model('Conversations');
 
 		// Set the startlimit
-		$conv_model->setState('limitstart', $limitstart);
+		$convModel->setState('limitstart', $limitstart);
+		$options		=	array();
+		$options['limit'] = $limit;
 
-		if ($conversation_id)
+		if ($conversationId)
 		{
 			$data = array();
-			$data['participant'] = $this->getParticipantUsers($conversation_id);
-			$msg_data = $conv_model->setLimit($limit)->getMessages($conversation_id, $log_user->id);
-			$res->result = $mapp->mapItem($msg_data, 'message', $log_user->id);
+			$data['participant']	=	$this->getParticipantUsers($conversationId);
+			$msg_data				=	$convModel->getMessages($conversationId, $logUser->id, $options);
+			$res->result			=	$mapp->mapItem($msg_data, 'message', $logUser->id);
 		}
 		else
 		{
@@ -223,7 +224,7 @@ class EasysocialApiResourceMessage extends ApiResource
 				$options['filter'] = $filter;
 			}
 
-			$conversion = $conv_model->getConversations($log_user->id, $options);
+			$conversion = $convModel->getConversations($logUser->id, $options);
 
 			/*
 			 * $conversation->conversation->isparticipant = $row->isparticipant;
@@ -233,7 +234,7 @@ class EasysocialApiResourceMessage extends ApiResource
 
 			if (count($conversion) > 0)
 			{
-				$res->result = $mapp->mapItem($conversion, 'conversion', $log_user->id);
+				$res->result = $mapp->mapItem($conversion, 'conversion', $logUser->id);
 				$res->result = array_slice($res->result, $limitstart, $limit);
 			}
 			else
@@ -248,7 +249,7 @@ class EasysocialApiResourceMessage extends ApiResource
 	/**
 	 * Method getParticipantUsers
 	 *
-	 * @param  int  $con_id  Conversation ID
+	 * @param   int  $con_id  Conversation ID
 	 *
 	 * @return mixed
 	 *

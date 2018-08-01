@@ -93,45 +93,48 @@ class EasysocialApiResourceSearch extends ApiResource
 		}
 		else
 		{
-			if ($type == 'user')
+			switch ($type)
 			{
-				$res->result = $this->getFriendList($log_user, $search, $limitstart, $limit);
+				case 'user':
+							$res->result = $this->getFriendList($log_user, $search, $limitstart, $limit);
 
-				if (empty($res->result))
-				{
-					// Message to show when the list is empty
-					$res->empty_message = JText::_('PLG_API_EASYSOCIAL_USER_NOT_FOUND');
-				}
-			}
-			elseif ($type == 'event')
-			{
-				$res->result = $this->getEventList($log_user, $search, $limitstart, $limit);
+							if (empty($res->result))
+							{
+								// Message to show when the list is empty
+								$res->empty_message = JText::_('PLG_API_EASYSOCIAL_USER_NOT_FOUND');
+							}
 
-				if (empty($res->result->events))
-				{
-					// Message to show when the list is empty
-					$res->empty_message = JText::_('PLG_API_EASYSOCIAL_SEARCH_EVENT_NOT_FOUND');
-				}
-			}
-			elseif ($type == 'page')
-			{
-				$res->result = $this->getPageList($log_user, $search, $limitstart, $limit);
+					break;
+				case 'event':
+							$res->result = $this->getEventList($log_user, $search, $limitstart, $limit);
 
-				if (empty($res->result))
-				{
-					// Message to show when the list is empty
-					$res->empty_message = JText::_('PLG_API_EASYSOCIAL_PAGE_NOT_FOUND');
-				}
-			}
-			else
-			{
-				$res->result = $this->getGroupList($log_user, $search, $limitstart, $limit);
+							if (empty($res->result->events))
+							{
+								// Message to show when the list is empty
+								$res->empty_message = JText::_('PLG_API_EASYSOCIAL_SEARCH_EVENT_NOT_FOUND');
+							}
 
-				if (empty($res->result))
-				{
-					// Message to show when the list is empty
-					$res->empty_message = JText::_('PLG_API_EASYSOCIAL_GROUP_NOT_FOUND');
-				}
+					break;
+				case 'page':
+							$res->result = $this->getPageList($log_user, $search, $limitstart, $limit);
+
+							if (empty($res->result))
+							{
+								// Message to show when the list is empty
+								$res->empty_message = JText::_('PLG_API_EASYSOCIAL_PAGE_NOT_FOUND');
+							}
+
+					break;
+				default :
+							$res->result = $this->getGroupList($log_user, $search, $limitstart, $limit);
+
+							if (empty($res->result))
+							{
+								// Message to show when the list is empty
+								$res->empty_message = JText::_('PLG_API_EASYSOCIAL_GROUP_NOT_FOUND');
+							}
+
+					break;
 			}
 		}
 
@@ -192,7 +195,7 @@ class EasysocialApiResourceSearch extends ApiResource
 	/**
 	 * Method Fetch events data
 	 *
-	 * @param   object   $log_user    user object
+	 * @param   object   $logUser     user object
 	 * @param   string   $search      search keyword
 	 * @param   integer  $limitstart  limitstart
 	 * @param   integer  $limit       limit
@@ -201,24 +204,24 @@ class EasysocialApiResourceSearch extends ApiResource
 	 *
 	 * @since 1.0
 	 */
-	public function getEventList($log_user, $search, $limitstart, $limit)
+	public function getEventList($logUser, $search, $limitstart, $limit)
 	{
 		$mapp = new EasySocialApiMappingHelper;
 		$result = new stdClass;
 
 		$db = JFactory::getDbo();
-		$query1 = $db->getQuery(true);
-		$query1->select($db->quoteName(array('cl.id')));
-		$query1->from($db->quoteName('#__social_clusters', 'cl'));
+		$query = $db->getQuery(true);
+		$query->select($db->quoteName(array('cl.id')));
+		$query->from($db->quoteName('#__social_clusters', 'cl'));
 
 		if (!empty($search))
 		{
-			$query1->where("(cl.title LIKE '%" . $search . "%' )");
+			$query->where("(cl.title LIKE '%" . $search . "%' )");
 		}
 
-		$query1->where('cl.state = 1');
-		$query1->order($db->quoteName('cl.id') . 'ASC');
-		$db->setQuery($query1);
+		$query->where('cl.state = 1');
+		$query->order($db->quoteName('cl.id') . 'ASC');
+		$db->setQuery($query);
 		$edata = $db->loadObjectList();
 		$event = array();
 
@@ -229,7 +232,7 @@ class EasysocialApiResourceSearch extends ApiResource
 
 		// Manual pagination
 		$event = array_slice($event, $limitstart, $limit);
-		$result->events = $mapp->mapItem($event, 'event', $log_user->id);
+		$result->events = $mapp->mapItem($event, 'event', $logUser->id);
 
 		$catModel = FD::model('eventcategories');
 		$result->categories = $catModel->getCategories();
@@ -252,29 +255,14 @@ class EasysocialApiResourceSearch extends ApiResource
 	 */
 	public function getGroupList($log_user, $search, $limitstart, $limit)
 	{
+		/* Todo : Function depricated - Need to remove all search function and create one global function for all search type  */
 		$mapp = new EasySocialApiMappingHelper;
 
 		// $res = new stdClass;
 		$group = array();
 
-		$db = JFactory::getDbo();
-
-		$query1 = $db->getQuery(true);
-		$query1->select($db->quoteName(array('cl.id')));
-		$query1->from($db->quoteName('#__social_clusters', 'cl'));
-
-		if (!empty($search))
-		{
-			$query1->where("(cl.title LIKE '%" . $search . "%' )");
-		}
-
-		$query1->where('cl.state = 1');
-		$query1->order($db->quoteName('cl.id') . 'ASC');
-		$db->setQuery($query1);
-
-		$gdata = $db->loadObjectList();
-
-		// $grp_model = FD::model('Groups');
+		$model = FD::model('Groups');
+		$gdata = $model->search($search);
 
 		foreach ($gdata as $grp)
 		{
