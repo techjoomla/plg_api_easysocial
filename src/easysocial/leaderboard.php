@@ -65,7 +65,7 @@ class EasysocialApiResourceLeaderboard extends ApiResource
 		$mapp = new EasySocialApiMappingHelper;
 		$model = FD::model('Leaderboard');
 		$excludeAdmin = true;
-		$options = array('ordering' => 'points', 'excludeAdmin' => $excludeAdmin,'state' => 1);
+		$options = array('ordering' => 'points', 'excludeAdmin' => $excludeAdmin,'state' => 1, 'limit' => $limit);
 		$users = $model->getLadder($options, false);
 
 		// Response object
@@ -80,9 +80,8 @@ class EasysocialApiResourceLeaderboard extends ApiResource
 			$this->plugin->setResponse($res);
 		}
 
-		$leaderusers = $mapp->mapItem($users, 'user');
+		$output = $mapp->mapItem($users, 'user');
 
-		$output = array_slice($leaderusers, $limitstart, $limit);
 		$res->result = $output;
 
 		$this->plugin->setResponse($res);
