@@ -80,10 +80,8 @@ class EasysocialApiResourceLeaderboard extends ApiResource
 			$this->plugin->setResponse($res);
 		}
 
-		$output = $mapp->mapItem($users, 'user');
+		$res->result = $mapp->mapItem($users, 'user');
 
-		$res->result = $output;
-
-		$this->plugin->setResponse($res);
+		$this->plugin->setResponse($res->result);
 	}
 }
