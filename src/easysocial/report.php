@@ -71,7 +71,7 @@ class EasysocialApiResourceReport extends ApiResource
 		$options = array();
 		$options['created_by'] = $user->id;
 
-		$access = ES::access($userId, SOCIAL_TYPE_USER);
+		$access = ES::access($user->id, SOCIAL_TYPE_USER);
 		$accessReports = $access->get('reports');
 
 		// Ensure that the user did not exceed their group creation limit
