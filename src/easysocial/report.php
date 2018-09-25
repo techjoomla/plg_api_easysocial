@@ -66,6 +66,17 @@ class EasysocialApiResourceReport extends ApiResource
 		$data['type'] = $app->input->get('type', 'stream', 'STRING');
 		$data['title'] = $title;
 		$data['extension'] = 'com_easysocial';
+		$user = ES::user();
+
+		$access = ES::access($user->id, SOCIAL_TYPE_USER);
+		$accessReports = $access->get('reports');
+		$reports = ES::model('Reports');
+
+		// Ensure that the user did not exceed their report creation limit
+		if ($reports->getCount() >= $accessReports->limit)
+		{
+			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_REPORT_NOT_ALLOW_MESSAGE'));
+		}
 
 		// Response Object
 		$res = new stdClass;
