@@ -51,7 +51,6 @@ class EasysocialApiResourceUser extends ApiResource
 
 		if ($userIdentifier)
 		{
-			$response = new stdClass;
 			$formData = $app->input->getArray();
 
 			if ($formData['username'] == '' || $formData['name'] == '' || $formData['email'] == '')
@@ -59,12 +58,7 @@ class EasysocialApiResourceUser extends ApiResource
 				ApiError::raiseError(400, JText::_('PLG_API_USERS_REQUIRED_DATA_EMPTY_MESSAGE'));
 			}
 
-				$user = JFactory::getUser($userIdentifier);
-
-			if (!empty($userId))
-			{
-				$user = JFactory::getUser($userId);
-			}
+			$user = JFactory::getUser($userId);
 
 			$my = JFactory::getUser(606);
 
@@ -81,6 +75,8 @@ class EasysocialApiResourceUser extends ApiResource
 					{
 						$formData['password2'] = $formData['password'];
 					}
+
+					$passedUserGroups = array();
 
 					// Add newly added groups and keep the old one as it is.
 					if (!empty($formData['groups']))
@@ -106,18 +102,16 @@ class EasysocialApiResourceUser extends ApiResource
 	/**
 	 * Funtion for bind and save data and return response.
 	 *
-	 * @param   Object   $user      The user object.
-	 * @param   Array    $formData  Array of user data to be added or updated.
-	 * @param   Boolean  $isNew     Flag to differentiate the update of create action.
+	 * @param   Object  $user      The user object.
+	 * @param   Array   $formData  Array of user data to be added or updated.
 	 *
 	 * @return  object|void  $response  the response object created on after user saving. void and raise error
 	 *
 	 * @since   2.0
 	 */
-	private function storeUser($user, $formData, $isNew = 0)
+	private function storeUser($user, $formData)
 	{
 		$response = new stdClass;
-		$user = JFactory::getUser($userIdentifier);
 		$user->bind($formData);
 		$response->id = $user->id;
 		$response = $this->createEsprofile($user->id, $user);
@@ -159,7 +153,7 @@ class EasysocialApiResourceUser extends ApiResource
 
 			$fields = $fieldsModel->getCustomFields($options);
 
-			$epost = $this->create_field_arr($fields, $epost);
+			$epost = $this->create_field_arr($fields);
 
 			// Load json library.
 			$json = FD::json();
@@ -194,7 +188,6 @@ class EasysocialApiResourceUser extends ApiResource
 			$args 		= array(&$data, &$my);
 			$fieldsLib	= FD::fields();
 
-			$handler = $fieldsLib->getHandler();
 			$fieldsLib->trigger('onRegisterAfterSave', SOCIAL_FIELDS_GROUP_USER, $fields, $args);
 
 			$my->bindCustomFields($data);
@@ -217,14 +210,13 @@ class EasysocialApiResourceUser extends ApiResource
 	}
 
 	/**
-	 * Function ield array as per easysocial
+	 * Function field  array as per easysocial
 	 *
 	 * @param   Object  $fields  The fields object.
-	 * @param   Array   $post    Array of user data to be added or updated.
 	 * 
-	 * @return user obj
+	 * @return  array
 	 */
-	public function create_field_arr($fields, $post)
+	public function create_field_arr($fields)
 	{
 		$fld_data = array();
 		$app = JFactory::getApplication();
@@ -235,13 +227,11 @@ class EasysocialApiResourceUser extends ApiResource
 
 		if (!empty($_FILES['avatar']['name']))
 		{
+			$avtar_pth = '';
 			$upload_obj = new EasySocialApiUploadHelper;
 
 			$phto_obj = $upload_obj->ajax_avatar($_FILES['avatar']);
-			$avtar_pth = $phto_obj['temp_path'];
 			$avtar_scr = $phto_obj['temp_uri'];
-			$avtar_typ = 'upload';
-			$avatar_file_name = $_FILES['avatar']['name'];
 		}
 
 		foreach ($fields as $field)
@@ -271,10 +261,10 @@ class EasysocialApiResourceUser extends ApiResource
 								$fld_data['es-fields-' . $field->id] = Array
 								(
 									'source' => $avtar_scr,
-									'path' => $avtar_pth,
+									'path' => $phto_obj['temp_path'],
 									'data' => '',
-									'type' => $avtar_typ,
-									'name' => $avatar_file_name
+									'type' => 'upload',
+									'name' => $_FILES['avatar']['name']
 								);
 							}
 							break;
