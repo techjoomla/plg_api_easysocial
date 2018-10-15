@@ -58,7 +58,7 @@ class EasysocialApiResourceUser extends ApiResource
 				ApiError::raiseError(400, JText::_('PLG_API_USERS_REQUIRED_DATA_EMPTY_MESSAGE'));
 			}
 
-			$user = JFactory::getUser($userId);
+			$user = JFactory::getUser($userIdentifier);
 
 			$my = JFactory::getUser(606);
 
@@ -125,7 +125,7 @@ class EasysocialApiResourceUser extends ApiResource
 	 * @param   Object  $log_user  The login user id object.
 	 * @param   Array   $user      object of user data to be updated.
 	 * 
-	 * @return user obj
+	 * @return Object
 	 */
 	public function createEsprofile($log_user, $user)
 	{
@@ -135,7 +135,6 @@ class EasysocialApiResourceUser extends ApiResource
 		{
 			$app = JFactory::getApplication();
 
-			$epost = $app->input->get('fields', '', 'ARRAY');
 			$my = FD::user($log_user);
 
 			require_once JPATH_ADMINISTRATOR . '/components/com_easysocial/includes/foundry.php';
@@ -227,7 +226,7 @@ class EasysocialApiResourceUser extends ApiResource
 
 		if (!empty($_FILES['avatar']['name']))
 		{
-			$avtar_pth = '';
+			$phto_obj = '';
 			$upload_obj = new EasySocialApiUploadHelper;
 
 			$phto_obj = $upload_obj->ajax_avatar($_FILES['avatar']);
