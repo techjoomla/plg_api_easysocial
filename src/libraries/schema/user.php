@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
  *
  * @since  1.8.8
  */
-class serSimpleSchema
+class SerSimpleSchema
 {
 	public $id;
 
@@ -40,4 +40,6 @@ class serSimpleSchema
 	public $isrequestor;
 
 	public $display_name;
+
+	public $admin_count;
 }
