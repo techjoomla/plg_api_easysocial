@@ -36,7 +36,7 @@ class EasysocialApiResourceUser extends ApiResource
 	 */
 	public function get()
 	{
-	$this->plugin->setResponse("Use method post");
+		ApiError::raiseError(400, JText::_('PLG_API_EASYSOCIAL_USE_POST_METHOD_MESSAGE'));
 	}
 
 	/**
@@ -99,37 +99,8 @@ class EasysocialApiResourceUser extends ApiResource
 		}
 		else
 		{
-			$this->plugin->setResponse($this->content());
+			ApiError::raiseError(400, JText::_('PLG_API_USERS_USER_NOT_FOUND_MESSAGE'));
 		}
-	}
-
-	/**
-	 * get videos throught api
-	 *
-	 * @return  mixed
-	 *
-	 * @since 1.0
-	 */
-	public function content()
-	{
-		$res = new stdClass;
-		$jinput = JFactory::getApplication();
-		$app = $jinput->input->get('appname', null, 'STRING');
-		$company = $jinput->input->get('company', 'Appcarvers', 'STRING');
-		$day = $jinput->input->get('day', 30, 'INT');
-		/* $res->message = "<h3>" .
-						JText::sprintf('PLG_API_EASYSOCIAL_APP_TERM_ONE', $company) .
-						JText::sprintf('PLG_API_EASYSOCIAL_APP_TERM_TWO', $app, $company) .
-						JText::sprintf('PLG_API_EASYSOCIAL_APP_TERM_THREE', $company) .
-						JText::sprintf('PLG_API_EASYSOCIAL_APP_TERM_FOUR', $company, $day) . "</h3>";
-		*/
-
-		$res->message = JText::sprintf('PLG_API_EASYSOCIAL_APP_TERM_ONE', $company);
-		$res->message_one = JText::sprintf('PLG_API_EASYSOCIAL_APP_TERM_TWO', $app, $company);
-		$res->subtitle = JText::sprintf('PLG_API_EASYSOCIAL_APP_TERM_THREE', $company);
-		$res->rules = JText::sprintf('PLG_API_EASYSOCIAL_APP_TERM_FOUR', $company, $day);
-
-		return $res;
 	}
 
 	/**
