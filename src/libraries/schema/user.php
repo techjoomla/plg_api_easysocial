@@ -40,6 +40,4 @@ class SerSimpleSchema
 	public $isrequestor;
 
 	public $display_name;
-
-	public $admin_count;
 }
