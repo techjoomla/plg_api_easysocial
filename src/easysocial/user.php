@@ -1,9 +1,9 @@
 <?php
 /**
- * @package     Joomla.Administrator
- * @subpackage  com_trading
+ * @package     Com.Api
+ * @subpackage  User
  *
- * @copyright   Copyright (C) 2005 - 2014 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 // No direct access.
@@ -22,10 +22,9 @@ require_once JPATH_ROOT . '/administrator/components/com_users/models/users.php'
 /**
  * User Api.
  *
- * @package     Joomla.Administrator
- * @subpackage  com_api
+ * @package  Com.Api
  *
- * @since       1.0
+ * @since    1.0
  */
 class EasysocialApiResourceUser extends ApiResource
 {
@@ -60,7 +59,7 @@ class EasysocialApiResourceUser extends ApiResource
 
 			$user = JFactory::getUser($userIdentifier);
 
-			$my = JFactory::getUser(606);
+			$my = JFactory::getUser($userIdentifier);
 
 			// If user is already present then update it according to access.
 			if (!empty($user->id))
