@@ -1443,6 +1443,21 @@ class EasySocialApiMappingHelper
 				$item->isinvited = $grp_obj->isInvited($userid, $row->id);
 				$item->approval_pending	= $grp_obj->isPendingMember($userid, $row->id);
 
+				foreach ($item->friends as $isAdmin)
+				{
+					$adminCount = $grp_obj->isAdmin($isAdmin->id, $row->id);
+
+					if ($adminCount)
+					{
+						$isAdmin->isadmin = true;
+						$item->admin_count = count($adminCount) ? $item->admin_count + 1 : $adminCount;
+					}
+					else
+					{
+						$isAdmin->isadmin = false;
+					}
+				}
+
 				$result[] = $item;
 			}
 		}
