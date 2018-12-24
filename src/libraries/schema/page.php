@@ -63,6 +63,4 @@ class PageSimpleSchema
 	public $more_info;
 
 	public $params;
-
-	public $admin_count;
 }

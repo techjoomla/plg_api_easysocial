@@ -132,8 +132,6 @@ class EasysocialApiResourceUser extends ApiResource
 
 		if (JComponentHelper::isEnabled('com_easysocial', true))
 		{
-			$app = JFactory::getApplication();
-
 			$my = FD::user($log_user);
 
 			require_once JPATH_ADMINISTRATOR . '/components/com_easysocial/includes/foundry.php';
@@ -225,7 +223,6 @@ class EasysocialApiResourceUser extends ApiResource
 
 		if (!empty($_FILES['avatar']['name']))
 		{
-			$phto_obj = '';
 			$upload_obj = new EasySocialApiUploadHelper;
 
 			$phto_obj = $upload_obj->ajax_avatar($_FILES['avatar']);
