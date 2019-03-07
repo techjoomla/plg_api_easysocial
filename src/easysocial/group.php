@@ -47,10 +47,13 @@ class EasysocialApiResourceGroup extends ApiResource
 			ApiError::raiseError(400, JText::_('COM_EASYSOCIAL_GROUPS_INVALID_GROUP_ID'));
 		}
 
-		// Ensure that the user has access to view group's item
-		if (! $group->canViewItem() || !$group->isPublished() || ($user->id != $group->creator_uid && $user->isBlockedBy($group->creator_uid)))
+		if ($group->isInvited($user->id, $id))
 		{
-			ApiError::raiseError(403, JText::_('COM_EASYSOCIAL_GROUPS_NO_ACCESS'));
+			// Ensure that the user has access to view group's item
+			if (!$group->isPublished() || ($user->id != $group->creator_uid && $user->isBlockedBy($group->creator_uid)))
+			{
+				ApiError::raiseError(403, JText::_('COM_EASYSOCIAL_GROUPS_NO_ACCESS'));
+			}
 		}
 
 		$EasySocialApiMappingHelper = new EasySocialApiMappingHelper;
@@ -507,8 +510,8 @@ class EasysocialApiResourceGroup extends ApiResource
 	/**
 	 * Method to create stream on Easysocial wall
 	 *
-	 * @param   Object  $user    SocialUser Object
-	 * @param   Object  $group   SocialGroup Object
+	 * @param   Object  $user   SocialUser Object
+	 * @param   Object  $group  SocialGroup Object
 	 *
 	 * @return  boolean
 	 *
