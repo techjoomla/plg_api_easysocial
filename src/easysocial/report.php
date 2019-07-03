@@ -73,7 +73,7 @@ class EasysocialApiResourceReport extends ApiResource
 		$reports = ES::model('Reports');
 
 		// Ensure that the user did not exceed their report creation limit
-		if ($reports->getCount() >= $accessReports->limit)
+		if ($accessReports->limit && $reports->getCount() >= $accessReports->limit)
 		{
 			ApiError::raiseError(403, JText::_('PLG_API_EASYSOCIAL_REPORT_NOT_ALLOW_MESSAGE'));
 		}
