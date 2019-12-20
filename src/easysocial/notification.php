@@ -36,7 +36,25 @@ class EasysocialApiResourceNotification extends ApiResource
 	 */
 	public function get()
 	{
-		$this->plugin->setResponse($this->getData());
+		$app		=	JFactory::getApplication();
+		$action		=	$app->input->get('action', '', 'STRING');
+		$userid		=	$app->input->get('userid', 0, 'INT');
+		
+
+		switch($action)
+		{
+			case 'getunread': 		$this->getNotifications($userid);
+									break;
+
+			case 'cleanup' :		$this->markAsRead($userid);
+									break;
+
+			case 'unreadcount' :		$this->getNotificationCount($userid);
+									break;
+
+			default :			$this->plugin->setResponse($this->get_data());
+									break;
+		}
 	}
 
 	/**
@@ -304,7 +322,8 @@ class EasysocialApiResourceNotification extends ApiResource
 		$model = FD::model('Notifications');
 		$total = $model->getCount($options);
 
-		return $total;
+		$res->result['count'] = $total;
+		$this->plugin->setResponse($res);
 	}
 
 	/**
@@ -343,13 +362,75 @@ class EasysocialApiResourceNotification extends ApiResource
 	 */
 	public function getNotifications($uid)
 	{
-		$notification = FD::notification();
-		$options = array('target_id' => $uid,
-								'target_type' => SOCIAL_TYPE_USER,
-								'unread' => true
-								);
-			$items = $notification->getItems($options);
+		jimport('joomla.filesystem.file');
 
-			return $items;
+		$res = new stdClass;
+		$res->result = [];
+
+		$model	=	FD::notification();
+
+		$options = array(
+		'unread' => true,
+		'target_id' => $userid,
+		'target_type' => SOCIAL_TYPE_USER
+		);
+
+		$items = $model->getItems($options);
+		
+		foreach ($items as $ky => $item)
+		{
+			if (boolval(JFile::exists($item->image)))
+			{
+				$image = JURI::root() . $item->image;
+
+				if (!JFile::exists($image))
+				{
+					$item->image = "";
+				}
+			}
+		}
+
+		if($items)
+		{
+			$res->result = $items;
+
+		}
+		else
+		{
+			
+			$res->result = [];
+		 }
+
+		$this->plugin->setResponse($res);
+	}
+
+
+	/**
+	 * Method cleanup notification
+	 *
+	 * @param   string  $uid  user id
+	 * 
+	 * @return string
+	 *
+	 * @since 1.0
+	 */
+	public function markAsRead($userid)
+	{
+		
+		$res = new stdClass;
+		$res->result = [];
+
+		$model = ES::model('Notifications');
+		$result = $model->setAllState(SOCIAL_NOTIFICATION_STATE_READ);
+		
+		if (!$result) {
+			$res->result->message	=	JText::_('COM_EASYSOCIAL_NOTIFICATIONS_FAILED_TO_MARK_AS_READ');
+		}
+		else{
+			$res->message = JText::_('PLG_API_EASYSOCIAL__NOTIFICATIONS_MARKED_AS_READ');
+		}
+		
+		$this->plugin->setResponse($res);
+		
 	}
 }
