@@ -49,21 +49,12 @@ class EasysocialApiResourceNotification extends ApiResource
 			case 'cleanup' :		$this->markAsRead($userid);
 									break;
 
-			case 'unreadcount' :	$this->getNotificationCount($userid);
+			case 'unreadcount' :		$this->getNotificationCount($userid);
 									break;
 
-			default :				$this->plugin->setResponse($this->get_data());
+			default :			$this->plugin->setResponse($this->get_data());
 									break;
 		}
-		
-				/*
-		if($action)
-		{
-			$this->plugin->setResponse($this->get_data());
-		}
-		else{
-			$this->get_notifications($userid);
-		}*/
 	}
 
 	/**
@@ -436,7 +427,7 @@ class EasysocialApiResourceNotification extends ApiResource
 			$res->result->message	=	JText::_('COM_EASYSOCIAL_NOTIFICATIONS_FAILED_TO_MARK_AS_READ');
 		}
 		else{
-			$res->message = "Successfully..! All Notifications are Marked as Read";
+			$res->message = JText::_('PLG_API_EASYSOCIAL__NOTIFICATIONS_MARKED_AS_READ');
 		}
 		
 		$this->plugin->setResponse($res);
