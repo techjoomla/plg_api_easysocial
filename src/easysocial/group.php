@@ -70,6 +70,12 @@ class EasysocialApiResourceGroup extends ApiResource
 		foreach ($groupObject[0]->more_info as $key => $value)
 		{
 			$updatedCustomFieldValue = $fieldsModel->getCustomFieldsValue($value->field_id ,$id ,SOCIAL_TYPE_GROUP);
+
+			if (json_decode($updatedCustomFieldValue[0]) !== null)
+			{
+				$updatedCustomFieldValue[0] = json_decode($updatedCustomFieldValue[0]);
+			}
+
 			$groupObject[0]->more_info[$key]->field_value = $updatedCustomFieldValue;
 		}
 

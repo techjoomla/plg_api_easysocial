@@ -59,6 +59,12 @@ class EasysocialApiResourcePage extends ApiResource
 		foreach ($pageObject[0]->more_info as $key => $value)
 		{
 			$updatedCustomFieldValue = $fieldsModel->getCustomFieldsValue($value->field_id ,$pageId ,SOCIAL_TYPE_PAGE);
+
+			if (json_decode($updatedCustomFieldValue[0]) !== null)
+			{
+				$updatedCustomFieldValue[0] = json_decode($updatedCustomFieldValue[0]);
+			}
+
 			$pageObject[0]->more_info[$key]->field_value = $updatedCustomFieldValue;
 		}
 
